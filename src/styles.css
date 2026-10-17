@@ -26,29 +26,6 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #14130f;
-    --surface: #1c1a16;
-    --sunken: #0f0e0b;
-    --ink: #ede8dd;
-    --ink-2: #c9c2b3;
-    --muted: #9a9283;
-    --line: #34312a;
-    --line-soft: #28261f;
-    --accent: #8ea6ff;
-    --accent-ink: #0d1330;
-    --accent-soft: #232b4a;
-    --ochre: #e0a640;
-    --ochre-soft: #3a2e17;
-    --now: #5fcf95;
-    --upcoming: #8ea6ff;
-    --past: #9a9283;
-    --shadow: 0 1px 2px rgb(0 0 0 / 30%), 0 10px 30px -12px rgb(0 0 0 / 60%);
-    color-scheme: dark;
-  }
-}
-
 *,
 *::before,
 *::after {

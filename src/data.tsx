@@ -157,7 +157,7 @@ function initialLang(): Lang {
   } catch {
     /* storage unavailable */
   }
-  return navigator.language?.startsWith('ru') ? 'ru' : 'en'
+  return 'ru'
 }
 
 export function ArchiveProvider({ children }: { children: ReactNode }) {
