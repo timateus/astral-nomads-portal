@@ -2034,16 +2034,6 @@ section {
   background: var(--surface);
   transition: border-color 0.15s, transform 0.2s;
 }
-.entity-card::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 14px;
-  bottom: 14px;
-  width: 3px;
-  border-radius: 0 3px 3px 0;
-  background: var(--kind, var(--accent));
-}
 .entity-card:hover {
   border-color: var(--kind, var(--accent));
   transform: translateY(-2px);
