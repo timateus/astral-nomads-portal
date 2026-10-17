@@ -1,8 +1,8 @@
 import type { Archive } from './data'
 import type { Material } from './types'
 
-export type FacetKey = 'type' | 'author' | 'country' | 'medium' | 'kw' | 'place' | 'courtesy' | 'ltype' | 'has'
-export const FACET_KEYS: FacetKey[] = ['type', 'author', 'country', 'medium', 'kw', 'place', 'courtesy', 'ltype', 'has']
+export type FacetKey = 'type' | 'author' | 'country' | 'medium' | 'kw' | 'place' | 'courtesy' | 'ltype' | 'ent' | 'has'
+export const FACET_KEYS: FacetKey[] = ['type', 'author', 'country', 'medium', 'kw', 'place', 'courtesy', 'ltype', 'ent', 'has']
 export type SortKey = 'relevance' | 'year-asc' | 'year-desc' | 'title' | 'random'
 export type ViewKey = 'grid' | 'list' | 'timeline'
 
@@ -76,6 +76,8 @@ export function valuesOf(m: Material, key: FacetKey): string[] {
       return m.courtesyKey ? [m.courtesyKey] : []
     case 'ltype':
       return m.materialType ? [m.materialType] : []
+    case 'ent':
+      return m.entityKeys
     case 'has': {
       const out: string[] = []
       if (m.pdf) out.push('pdf')

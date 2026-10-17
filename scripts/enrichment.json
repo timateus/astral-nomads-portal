@@ -1,0 +1,573 @@
+{
+  "_comment": "Hand-curated from the archive's own texts (material metadata, author essays, event and institution descriptions). 'aliases' are regular expressions matched against those texts to link each entity to materials, authors and events. Only facts stated in the archive are recorded here.",
+
+  "entities": [
+    { "id": "teatr-705", "kind": "institution", "type": { "ru": "Арт-пространство", "en": "Art space" }, "aliases": ["Театр 705", "space 705", "Theatre ?705"] },
+    { "id": "studiya-museum", "kind": "institution", "type": { "ru": "Архитектурная и художественная студия", "en": "Architecture and art studio" }, "aliases": ["[Сс]туди\\w* «?Museum", "MUSEUM\\.kg", "Studio «?Museum"] },
+    { "id": "dushanbe-art-graund", "kind": "institution", "type": { "ru": "Некоммерческая организация", "en": "Non-profit organisation" }, "aliases": ["Душанбе Арт[- ]Граунд", "Dushan[bЬ]e Art Ground", "Sanati Muosir", "Санъати Муосир"] },
+
+    {
+      "id": "voyager-gallery", "kind": "institution",
+      "name": { "ru": "Галерея «Вояджер»", "en": "Voyager Gallery" },
+      "type": { "ru": "Галерея", "en": "Gallery" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Алматинская галерея. Предоставила архиву большую часть работ Сергея Маслова.", "en": "Almaty gallery that provided most of Sergey Maslov's works in the archive." },
+      "aliases": ["Вояджер", "Voyager"]
+    },
+    {
+      "id": "scca-almaty", "kind": "institution",
+      "name": { "ru": "СЦСИ-Алматы", "en": "SCCA-Almaty" },
+      "type": { "ru": "Центр современного искусства", "en": "Contemporary art centre" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Центр современного искусства в Алматы: издатель каталога годовой выставки «Самоидентификация: футурологические прогнозы», источник видео акций Сергея Маслова 1997–1998 годов.", "en": "Contemporary art centre in Almaty; publisher of the annual exhibition catalogue “Self-identity: futurological prognosis” and source of Sergey Maslov's 1997–98 action videos." },
+      "aliases": ["СЦСИ", "SCCA"]
+    },
+    {
+      "id": "asia-art-plus", "kind": "institution",
+      "name": { "ru": "ОФ «Азия Арт+»", "en": "Asia Art+ Foundation" },
+      "type": { "ru": "Общественный фонд", "en": "Public foundation" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Общественный фонд в Алматы, хранитель работ Рустама Хальфина в архиве.", "en": "Public foundation in Almaty holding Rustam Khalfin's works in the archive." },
+      "aliases": ["Азия Арт ?\\+", "Asia Art ?\\+"]
+    },
+    {
+      "id": "kurama-art", "kind": "institution",
+      "name": { "ru": "Галерея «Курама Арт»", "en": "Kurama Art Gallery" },
+      "type": { "ru": "Галерея", "en": "Gallery" }, "city": { "ru": "Бишкек", "en": "Bishkek" }, "country": "KG",
+      "description": { "ru": "Бишкекская галерея, организатор первого Центральноазиатского павильона на 51-й Венецианской биеннале (2005) и издатель его каталога.", "en": "Bishkek gallery; organiser of the first Central Asian Pavilion at the 51st Venice Biennale (2005) and publisher of its catalogue." },
+      "aliases": ["Курама ?Арт", "Kurama ?Art"]
+    },
+    {
+      "id": "look-gallery", "kind": "institution",
+      "name": { "ru": "Галерея LOOK", "en": "LOOK Gallery" },
+      "type": { "ru": "Галерея", "en": "Gallery" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Галерея Рустама Хальфина в Алматы. В 1998–2001 годах в ней находился «Нулевой уровень. Глиняный проект», занимавший оба этажа.", "en": "Rustam Khalfin's gallery in Almaty. From 1998 to 2001 it housed “Zero Level. Clay Project”, which filled both floors." },
+      "aliases": ["\\bLOOK\\b"], "caseSensitive": true
+    },
+    {
+      "id": "kasteev-museum", "kind": "institution",
+      "name": { "ru": "Государственный музей искусств им. А. Кастеева", "en": "A. Kasteyev State Museum of Arts" },
+      "type": { "ru": "Музей", "en": "Museum" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Площадка «Парада галерей 98» и соиздатель каталога выставки «Айголек».", "en": "Venue of the 1998 Parade of Galleries and co-publisher of the “Aygolek” catalogue." },
+      "aliases": ["Кастеев", "Kaste[y]?ev"]
+    },
+    {
+      "id": "aitiev-museum", "kind": "institution",
+      "name": { "ru": "Национальный музей изобразительных искусств им. Г. Айтиева", "en": "G. Aitiev National Museum of Fine Arts" },
+      "type": { "ru": "Музей", "en": "Museum" }, "city": { "ru": "Бишкек", "en": "Bishkek" }, "country": "KG",
+      "description": { "ru": "В его залах в 2004 году прошла I Бишкекская международная выставка современного искусства «…и Другие».", "en": "Hosted the 1st Bishkek International Exhibition of Contemporary Art “…and Others” in 2004." },
+      "aliases": ["Айтиев", "Aitiev"]
+    },
+    {
+      "id": "asanbay-center", "kind": "venue",
+      "name": { "ru": "«Асанбай центр»", "en": "Asanbay Centre" },
+      "type": { "ru": "Выставочная площадка", "en": "Exhibition venue" }, "city": { "ru": "Бишкек", "en": "Bishkek" }, "country": "KG",
+      "description": { "ru": "Площадка выставки «Не_Не_Не» (2017) и конкурса April Fools' 2017.", "en": "Venue of the “Ne_Ne_Ne” exhibition (2017) and the 2017 April Fools' Competition." },
+      "aliases": ["Асанбай", "Ass?anba[iy]"]
+    },
+    {
+      "id": "cca-tashkent", "kind": "institution",
+      "name": { "ru": "Центр современного искусства Ташкента", "en": "Centre for Contemporary Arts Tashkent" },
+      "type": { "ru": "Центр современного искусства", "en": "Contemporary art centre" }, "city": { "ru": "Ташкент", "en": "Tashkent" }, "country": "UZ",
+      "description": { "ru": "Представляет выставку Вячеслава Ахунова «Инструменты разума» — параллельный проект 61-й Венецианской биеннале.", "en": "Presents Vyacheslav Akhunov's “Instruments of Reason”, a collateral event of the 61st Venice Biennale." },
+      "aliases": ["CCA Tashkent", "Центр\\w* современного искусства Ташкента", "Centre for Contemporary Arts? Tashkent"]
+    },
+    {
+      "id": "tselinny", "kind": "institution",
+      "name": { "ru": "Центр современной культуры «Целинный»", "en": "Tselinny Centre of Contemporary Culture" },
+      "type": { "ru": "Центр современной культуры", "en": "Contemporary culture centre" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Площадка архивной выставки «Документация: воображение Центральной Азии на карте современного искусства» (2025–2026).", "en": "Venue of the archival exhibition “Documentation: imagining Central Asia on the map of contemporary art” (2025–26)." },
+      "aliases": ["Целинн", "Tselinny"]
+    },
+    {
+      "id": "desht-i-art", "kind": "institution",
+      "name": { "ru": "Дешт-и-Арт Центр", "en": "Desht-i-Art Centre" },
+      "type": { "ru": "Центр современного искусства", "en": "Contemporary art centre" }, "city": { "ru": "Караганда", "en": "Karaganda" }, "country": "KZ",
+      "description": { "ru": "Карагандинский центр, созданный Даной Сафаровой и Ларисой Плетниковой. Продвигал образовательные и выставочные проекты в новых видах искусства, проводил семинары и мастер-классы (2001), выставку «Просто Ку».", "en": "Karaganda centre founded by Dana Safarova and Larisa Pletnikova. It ran education and exhibition projects in new art forms, seminars and workshops (2001), and the exhibition “Prosto Ku”." },
+      "aliases": ["Дешт-?и-?Арт", "Дешти-Арт", "Desht-?i-?Art"]
+    },
+    {
+      "id": "karaganda-museum", "kind": "institution",
+      "name": { "ru": "Карагандинский музей искусств", "en": "Karaganda Museum of Fine Arts" },
+      "type": { "ru": "Музей", "en": "Museum" }, "city": { "ru": "Караганда", "en": "Karaganda" }, "country": "KZ",
+      "description": { "ru": "Здесь проходили традиционные выставки карагандинских художников, в которых участвовал Юрий Двинянинов (1997–2003).", "en": "Hosted the regular Karaganda artists' exhibitions in which Yuriy Dvinyaninov took part (1997–2003)." },
+      "aliases": ["Карагандинск\\w+ музе\\w+ искусств"]
+    },
+    {
+      "id": "german-centre-karaganda", "kind": "venue",
+      "name": { "ru": "Немецкий центр (Караганда)", "en": "German Centre, Karaganda" },
+      "type": { "ru": "Выставочная площадка", "en": "Exhibition venue" }, "city": { "ru": "Караганда", "en": "Karaganda" }, "country": "KZ",
+      "description": { "ru": "Здесь Юрий Двинянинов показывал серию «Да-да».", "en": "Where Yuriy Dvinyaninov showed his “Da-da” series." },
+      "aliases": ["Немецк\\w+ центр"]
+    },
+    {
+      "id": "goethe-institut", "kind": "institution",
+      "name": { "ru": "Гёте-институт", "en": "Goethe-Institut" },
+      "type": { "ru": "Культурный институт", "en": "Cultural institute" }, "country": null,
+      "description": { "ru": "В рамках его проекта «Минус двадцать» прошла выставка «Между прошлым и будущим. Археология актуальности» в Алматы.", "en": "Its project “Minus Twenty” included the exhibition “Between Past and Future. Archaeology of the Present” in Almaty." },
+      "aliases": ["Г[её]те-институт", "Goethe"]
+    },
+    {
+      "id": "cornerhouse", "kind": "institution",
+      "name": { "ru": "Cornerhouse", "en": "Cornerhouse" },
+      "type": { "ru": "Центр искусств", "en": "Arts centre" }, "city": { "ru": "Манчестер", "en": "Manchester" }, "country": "GB",
+      "description": { "ru": "Центр искусств в Манчестере; в его кафе Вячеслав Ахунов проводил перформансы в рамках проекта UK+CA.", "en": "Manchester arts centre; Vyacheslav Akhunov performed in its café as part of the UK+CA project." },
+      "aliases": ["Cornerhouse"]
+    },
+    {
+      "id": "dom-kino-dushanbe", "kind": "institution",
+      "name": { "ru": "Дом кино (Душанбе)", "en": "Dom Kino, Dushanbe" },
+      "type": { "ru": "Партнёр проекта", "en": "Project partner" }, "city": { "ru": "Душанбе", "en": "Dushanbe" }, "country": "TJ",
+      "description": { "ru": "Партнёр проекта Душанбе Арт Граунд «Переосмысление нового человека».", "en": "Partner of Dushanbe Art Ground's project “Reimagining the New Man”." },
+      "aliases": ["Dom KINO", "Дом кино"]
+    },
+    {
+      "id": "soghd-center", "kind": "institution",
+      "name": { "ru": "Центр искусств и образовательных программ «Согд»", "en": "Center for Arts and Education Programs ‘Soghd’" },
+      "type": { "ru": "Партнёр проекта", "en": "Project partner" }, "city": { "ru": "Худжанд", "en": "Khujand" }, "country": "TJ",
+      "description": { "ru": "Партнёр проекта Душанбе Арт Граунд «Переосмысление нового человека».", "en": "Partner of Dushanbe Art Ground's project “Reimagining the New Man”." },
+      "aliases": ["Soghd"]
+    },
+    {
+      "id": "osi-tajikistan", "kind": "institution",
+      "name": { "ru": "Институт «Открытое общество» — Фонд содействия в Таджикистане", "en": "Open Society Institute – Assistance Foundation Tajikistan" },
+      "type": { "ru": "Фонд", "en": "Foundation" }, "city": { "ru": "Душанбе", "en": "Dushanbe" }, "country": "TJ",
+      "description": { "ru": "Поддерживал проекты Душанбе Арт Граунд.", "en": "Supported Dushanbe Art Ground's projects." },
+      "aliases": ["Open Society [lI]nstitute"]
+    },
+    {
+      "id": "union-artists-uz", "kind": "institution",
+      "name": { "ru": "Союз художников Узбекистана", "en": "Union of Artists of Uzbekistan" },
+      "type": { "ru": "Творческий союз", "en": "Artists' union" }, "city": { "ru": "Ташкент", "en": "Tashkent" }, "country": "UZ",
+      "description": { "ru": "По приглашению его председателя Рахима Ахмедова Вячеслав Ахунов переехал в Ташкент; членом союза он стал в 1982 году.", "en": "At the invitation of its chairman Rakhim Akhmedov, Vyacheslav Akhunov moved to Tashkent; he became a member in 1982." },
+      "aliases": ["Союз\\w* художников Узбекистана"]
+    },
+    {
+      "id": "union-artists-kz", "kind": "institution",
+      "name": { "ru": "Союз художников Республики Казахстан", "en": "Union of Artists of the Republic of Kazakhstan" },
+      "type": { "ru": "Творческий союз", "en": "Artists' union" }, "country": "KZ",
+      "description": { "ru": "Фатима Омир — член союза с 2010 года.", "en": "Fatima Omir has been a member since 2010." },
+      "aliases": ["Союз\\w* художников (Республики )?Казахстан", "Union of Artists of the Republic of Kazakhstan"]
+    },
+    {
+      "id": "union-artists-tj", "kind": "institution",
+      "name": { "ru": "Союз художников Таджикистана", "en": "Union of Artists of Tajikistan" },
+      "type": { "ru": "Творческий союз", "en": "Artists' union" }, "country": "TJ",
+      "description": { "ru": "Партнёр проекта Душанбе Арт Граунд «Переосмысление нового человека».", "en": "Partner of Dushanbe Art Ground's project “Reimagining the New Man”." },
+      "aliases": ["Union of Artists of Tajikistan"]
+    },
+    {
+      "id": "state-institute-visual-arts-tj", "kind": "education",
+      "name": { "ru": "Государственный институт изобразительного искусства и дизайна Таджикистана", "en": "State Institute of Visual Arts and Design, Tajikistan" },
+      "type": { "ru": "Вуз", "en": "Art school" }, "city": { "ru": "Душанбе", "en": "Dushanbe" }, "country": "TJ",
+      "description": { "ru": "Партнёр проекта Душанбе Арт Граунд «Переосмысление нового человека».", "en": "Partner of Dushanbe Art Ground's project “Reimagining the New Man”." },
+      "aliases": ["State [lI]nstitute of Visual Arts"]
+    },
+    {
+      "id": "surikov-institute", "kind": "education",
+      "name": { "ru": "МГХИ им. В. И. Сурикова", "en": "Surikov Moscow State Art Institute" },
+      "type": { "ru": "Вуз", "en": "Art school" }, "city": { "ru": "Москва", "en": "Moscow" }, "country": null,
+      "description": { "ru": "Вячеслав Ахунов окончил институт в 1979 году.", "en": "Vyacheslav Akhunov graduated in 1979." },
+      "aliases": ["Сурикова", "Surikov"]
+    },
+    {
+      "id": "mkhat-school", "kind": "education",
+      "name": { "ru": "Школа-студия МХАТ", "en": "Moscow Art Theatre School" },
+      "type": { "ru": "Вуз", "en": "Drama school" }, "city": { "ru": "Москва", "en": "Moscow" }, "country": null,
+      "description": { "ru": "Джамшед Холиков окончил постановочный факультет.", "en": "Jamshed Kholikov graduated from its stage design department." },
+      "aliases": ["Школ\\w*-студи\\w* МХАТ", "Moscow Art Theatre School"]
+    },
+    {
+      "id": "vakhidov-theatre", "kind": "institution",
+      "name": { "ru": "Молодёжный театр им. Вахидова", "en": "Vakhidov Youth Theatre" },
+      "type": { "ru": "Театр", "en": "Theatre" }, "city": { "ru": "Душанбе", "en": "Dushanbe" }, "country": "TJ",
+      "description": { "ru": "Джамшед Холиков восемь лет работал здесь художником-постановщиком.", "en": "Jamshed Kholikov worked here as a stage designer for eight years." },
+      "aliases": ["Вахидова", "Vakhidov"]
+    },
+    {
+      "id": "kaznai", "kind": "education",
+      "name": { "ru": "Казахская национальная академия искусств им. Т. Жургенова", "en": "T. Zhurgenov Kazakh National Academy of Arts" },
+      "type": { "ru": "Вуз", "en": "Art school" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Фатима Омир окончила факультет живописи и скульптуры (1996–2002).", "en": "Fatima Omir studied painting and sculpture here (1996–2002)." },
+      "aliases": ["Zhurgenov", "Жургенов"]
+    },
+    {
+      "id": "tansykbaev-college", "kind": "education",
+      "name": { "ru": "Алматинское художественное училище им. О. Тансыкбаева", "en": "O. Tansykbaev Almaty Art College" },
+      "type": { "ru": "Училище", "en": "Art college" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Фатима Омир училась здесь на отделении художественной педагогики (1992–1996).", "en": "Fatima Omir studied art pedagogy here (1992–1996)." },
+      "aliases": ["Tansykbae", "Тансыкбае"]
+    },
+    {
+      "id": "kazgasa", "kind": "education",
+      "name": { "ru": "КазГАСА", "en": "KazGASA" },
+      "type": { "ru": "Вуз", "en": "University" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Казахская головная архитектурно-строительная академия; её профессор Алим Сабитов вёл мастер-класс Дешт-и-Арт Центра в Караганде (2004).", "en": "Kazakh Leading Academy of Architecture and Civil Engineering; its professor Alim Sabitov led a Desht-i-Art Centre workshop in Karaganda (2004)." },
+      "aliases": ["КазГАСА", "KazGASA"]
+    },
+    {
+      "id": "maly-gruzinskaya", "kind": "venue",
+      "name": { "ru": "Выставочный зал на Малой Грузинской", "en": "Malaya Gruzinskaya exhibition hall" },
+      "type": { "ru": "Выставочная площадка", "en": "Exhibition venue" }, "city": { "ru": "Москва", "en": "Moscow" }, "country": null,
+      "description": { "ru": "Площадка московских нонконформистов. В 1977 году её комиссия отвергла «Мухобойки» Ахунова; в 1981 году здесь впервые выставлялся Сергей Маслов.", "en": "Venue of the Moscow nonconformists. Its committee rejected Akhunov's “Fly-swatters” in 1977; Sergey Maslov first exhibited here in 1981." },
+      "aliases": ["Малой Грузинской", "Malaya Gruzinskaya"]
+    },
+    {
+      "id": "tengri-umai", "kind": "institution",
+      "name": { "ru": "Галерея «Тенгри-Умай»", "en": "Tengri Umai Gallery" },
+      "type": { "ru": "Галерея", "en": "Gallery" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Здесь Фатима Омир показывала работы в 2015–2016 годах.", "en": "Fatima Omir showed work here in 2015–2016." },
+      "aliases": ["Tengri Umai", "Тенгри[- ]Умай"]
+    },
+    {
+      "id": "central-state-museum-kz", "kind": "institution",
+      "name": { "ru": "Центральный государственный музей Республики Казахстан", "en": "Central State Museum of the Republic of Kazakhstan" },
+      "type": { "ru": "Музей", "en": "Museum" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Площадка выставки «Always Life» (2015).", "en": "Venue of the exhibition “Always Life” (2015)." },
+      "aliases": ["Central State Museum"]
+    },
+    {
+      "id": "national-museum-kz", "kind": "institution",
+      "name": { "ru": "Национальный музей Республики Казахстан", "en": "National Museum of the Republic of Kazakhstan" },
+      "type": { "ru": "Музей", "en": "Museum" }, "city": { "ru": "Астана", "en": "Astana" }, "country": "KZ",
+      "description": { "ru": "Площадка выставки «Time&Astana: Afterfuture» (2017).", "en": "Venue of “Time&Astana: Afterfuture” (2017)." },
+      "aliases": ["National Museum ?/ ?Astana", "Afterfuture exhibition ?/ ?National Museum"]
+    },
+    {
+      "id": "palazzo-pisani", "kind": "venue",
+      "name": { "ru": "Палаццо Пизани", "en": "Palazzo Pisani" },
+      "type": { "ru": "Выставочная площадка", "en": "Exhibition venue" }, "city": { "ru": "Венеция", "en": "Venice" }, "country": "IT",
+      "description": { "ru": "Здесь в 2005 году работал первый Центральноазиатский павильон (Каннареджо, 6103/A).", "en": "Home of the first Central Asian Pavilion in 2005 (Cannaregio 6103/A)." },
+      "aliases": ["Палаццо Пизани", "Palazzo Pisani"]
+    },
+    {
+      "id": "palazzo-franchetti", "kind": "venue",
+      "name": { "ru": "Палаццо Франкетти", "en": "Palazzo Franchetti" },
+      "type": { "ru": "Выставочная площадка", "en": "Exhibition venue" }, "city": { "ru": "Венеция", "en": "Venice" }, "country": "IT",
+      "description": { "ru": "Площадка выставки Вячеслава Ахунова «Инструменты разума» (2026), Сан-Марко 2847.", "en": "Venue of Vyacheslav Akhunov's “Instruments of Reason” (2026), San Marco 2847." },
+      "aliases": ["Палаццо Франкетти", "Palazzo Franchetti"]
+    },
+    {
+      "id": "almaty-observatory", "kind": "venue",
+      "name": { "ru": "Большая алматинская обсерватория", "en": "Big Almaty Observatory" },
+      "type": { "ru": "Площадка", "en": "Site" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Место воркшопа «Арт-Дискурс'97» и перформанса «В честь всадника. Идеальное седло»; позднее — Летней школы современного искусства (2013).", "en": "Site of the Art-Discourse '97 workshop and the performance “In Honour of the Rider. The Ideal Saddle”; later of the Summer School of Contemporary Art (2013)." },
+      "aliases": ["[Оо]бсерватори", "[Oo]bservatory"]
+    },
+    {
+      "id": "big-almaty-lake", "kind": "venue",
+      "name": { "ru": "Большое алматинское озеро", "en": "Big Almaty Lake" },
+      "type": { "ru": "Площадка", "en": "Site" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Место хэппенинга Сергея Маслова «Рисунки для Демиурга» (Арт-Дискурс-97).", "en": "Site of Sergey Maslov's happening “Drawings for the Demiurge” (Art-Discourse '97)." },
+      "aliases": ["Большое алматинское озеро", "Big Almaty Lake"]
+    },
+
+    {
+      "id": "kokserek", "kind": "group",
+      "name": { "ru": "Группа «Коксерек»", "en": "Kokserek group" },
+      "type": { "ru": "Художественная группа", "en": "Artist group" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Участник годовой выставки СЦСИ-Алматы; соиздатель каталога «Айголек».", "en": "Took part in the SCCA-Almaty annual exhibition; co-publisher of the “Aygolek” catalogue." },
+      "aliases": ["Коксерек", "KOKSEREK", "Kokserek"]
+    },
+    {
+      "id": "kyzyl-traktor", "kind": "group",
+      "name": { "ru": "Группа «Кызыл Трактор»", "en": "Kyzyl Tractor group" },
+      "type": { "ru": "Художественная группа", "en": "Artist group" }, "country": "KZ",
+      "description": { "ru": "Участник выставки «Документация» в «Целинном»; соиздатель каталога «Айголек».", "en": "Took part in the “Documentation” exhibition at Tselinny; co-publisher of the “Aygolek” catalogue." },
+      "aliases": ["Кызыл Трактор", "Қызыл трактор", "Kyzyl Tra[ck]tor"]
+    },
+    {
+      "id": "tochka", "kind": "group",
+      "name": { "ru": "Группа «Точка»", "en": "Tochka group" },
+      "type": { "ru": "Музыкальная и художественная группа", "en": "Music and art group" }, "city": { "ru": "Караганда", "en": "Karaganda" }, "country": "KZ",
+      "description": { "ru": "Создана в начале 2000-х Юрием Двиняниновым (Гномом) и Сергеем Стрельцовым; играла регги, показывала перформансы в Дешт-и-Арт Центре (2001).", "en": "Founded in the early 2000s by Yuriy Dvinyaninov (Gnom) and Sergey Streltsov; played reggae and staged performances at the Desht-i-Art Centre (2001)." },
+      "aliases": ["[«\"]Точк[аи][»\"]", "[«\"]То4кИ[»\"]", "[«\"]Tochka[»\"]"]
+    },
+    {
+      "id": "mitki", "kind": "group",
+      "name": { "ru": "Митьки", "en": "Mitki" },
+      "type": { "ru": "Художественная группа", "en": "Artist group" }, "city": { "ru": "Санкт-Петербург", "en": "St Petersburg" }, "country": null,
+      "description": { "ru": "Петербургская группа, повлиявшая на Юрия Двинянинова.", "en": "St Petersburg group that influenced Yuriy Dvinyaninov." },
+      "aliases": ["Митьк", "митёк", "Mitki"]
+    },
+    {
+      "id": "sinie-nosy", "kind": "group",
+      "name": { "ru": "Группа «Синие носы»", "en": "Blue Noses group" },
+      "type": { "ru": "Художественная группа", "en": "Artist group" }, "country": null,
+      "description": { "ru": "Российская группа, повлиявшая на медиаработы Юрия Двинянинова.", "en": "Russian group that influenced Yuriy Dvinyaninov's media work." },
+      "aliases": ["Синие носы", "Blue Noses"]
+    },
+    {
+      "id": "meta-punk-quartet", "kind": "group",
+      "name": { "ru": "Meta-Punk-Quartet", "en": "Meta-Punk-Quartet" },
+      "type": { "ru": "Перформанс-группа", "en": "Performance group" }, "country": "KZ",
+      "description": { "ru": "Юлия Сорокина, Бахыт Бубиканова, Сауле Дюсенбина, Фатима Омир; перформанс «Весенние жесты ярости» (April Fools' 2019).", "en": "Yuliya Sorokina, Bakhyt Bubikanova, Saule Duisenbina, Fatima Omir; performance “Spring gestures of rage” (April Fools' 2019)." },
+      "aliases": ["Meta-Punk-Quartet"]
+    },
+    {
+      "id": "shkhzh", "kind": "education",
+      "name": { "ru": "«ШХЖ» — Школа художественного жеста", "en": "School of Artistic Gesture (ShKhZh)" },
+      "type": { "ru": "Школа", "en": "School" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Независимая школа; Фатима Омир — вольный слушатель (2017–2019), участник программ на Artbatfest 2018.", "en": "Independent school; Fatima Omir audited it (2017–2019) and took part in its Artbatfest 2018 programme." },
+      "aliases": ["ШХЖ", "School of Artistic Gesture"]
+    },
+
+    {
+      "id": "venice-biennale", "kind": "program",
+      "name": { "ru": "Венецианская биеннале", "en": "Venice Biennale" },
+      "type": { "ru": "Биеннале", "en": "Biennale" }, "city": { "ru": "Венеция", "en": "Venice" }, "country": "IT",
+      "description": { "ru": "Центральноазиатский павильон впервые появился на 51-й биеннале (2005); художники архива участвовали также в 52-й, 53-й и 61-й.", "en": "The Central Asian Pavilion first appeared at the 51st Biennale (2005); artists in the archive also took part in the 52nd, 53rd and 61st." },
+      "aliases": ["Венецианск\\w+ биеннале", "Biennale di Venezia", "Venice Biennale"]
+    },
+    {
+      "id": "bukhara-biennale", "kind": "program",
+      "name": { "ru": "Бухарская биеннале", "en": "Bukhara Biennale" },
+      "type": { "ru": "Биеннале", "en": "Biennale" }, "city": { "ru": "Бухара", "en": "Bukhara" }, "country": "UZ",
+      "description": { "ru": "Первое издание — 2025 (куратор Диана Кэмпбелл), второе — 2027.", "en": "First edition 2025 (curator Diana Campbell), second edition 2027." },
+      "aliases": ["Бухарск\\w+ биеннале", "Bukhara Biennale"]
+    },
+    {
+      "id": "art-discourse-97", "kind": "program",
+      "name": { "ru": "Арт-Дискурс'97", "en": "Art-Discourse '97" },
+      "type": { "ru": "Международный воркшоп", "en": "International workshop" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ", "year": 1997,
+      "description": { "ru": "Международный воркшоп по теории и практике современного искусства (1997).", "en": "International workshop on the theory and practice of contemporary art (1997)." },
+      "aliases": ["Арт-?Дискурс", "АРТ-ДИСКУРС", "Art-?Discourse"]
+    },
+    {
+      "id": "parade-of-galleries-98", "kind": "program",
+      "name": { "ru": "Парад галерей 98", "en": "Parade of Galleries '98" },
+      "type": { "ru": "Выставка", "en": "Exhibition" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ", "year": 1998,
+      "description": { "ru": "Выставка в ГМИ РК им. А. Кастеева; в её рамках Сергей Маслов провёл акцию «Восток — дело тонкое».", "en": "Exhibition at the Kasteyev State Museum of Arts, during which Sergey Maslov staged the action “The East is a Delicate Matter”." },
+      "aliases": ["Парад\\w* галерей", "Parade of Galleries"]
+    },
+    {
+      "id": "videoidentity-2004", "kind": "program",
+      "name": { "ru": "Фестиваль «Видеоидентичность: сакральные места Центральной Азии»", "en": "Video Identity: Sacred Places of Central Asia festival" },
+      "type": { "ru": "Видеофестиваль", "en": "Video festival" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ", "year": 2004,
+      "description": { "ru": "Фестиваль 2004 года, с которого началась видеопрактика Джамшеда Холикова.", "en": "2004 festival that started Jamshed Kholikov's video practice." },
+      "aliases": ["Видеоидентичность", "Video ?[Ii]dentity"]
+    },
+    {
+      "id": "i-drugie-2004", "kind": "program",
+      "name": { "ru": "«…и Другие» — I Бишкекская международная выставка современного искусства", "en": "“…and Others”, 1st Bishkek International Exhibition of Contemporary Art" },
+      "type": { "ru": "Выставка", "en": "Exhibition" }, "city": { "ru": "Бишкек", "en": "Bishkek" }, "country": "KG", "year": 2004,
+      "description": { "ru": "Проходила 25 апреля — 23 мая 2004 года в Национальном музее изобразительных искусств им. Г. Айтиева. Составители бюллетеня — Чурек Джамгерчинова, Асель Акматова, Улан Джапаров.", "en": "Held 25 April – 23 May 2004 at the G. Aitiev National Museum of Fine Arts. Bulletin by Churek Djamgerchinova, Asel Akmatova and Ulan Djaparov." },
+      "aliases": ["(\\.\\.\\.|…) ?и Другие", "(\\.\\.\\.|…) ?and Others"]
+    },
+    {
+      "id": "plus-minus-1999", "kind": "program",
+      "name": { "ru": "Выставка «Плюс-Минус»", "en": "“Plus-Minus” exhibition" },
+      "type": { "ru": "Выставка", "en": "Exhibition" }, "city": { "ru": "Бишкек", "en": "Bishkek" }, "country": "KG", "year": 1999,
+      "description": { "ru": "Выставка в Бишкеке, 1999.", "en": "Exhibition in Bishkek, 1999." },
+      "aliases": ["Плюс-Минус", "Plus-Minus"]
+    },
+    {
+      "id": "ne-ne-ne-2017", "kind": "program",
+      "name": { "ru": "Выставка «Не_Не_Не»", "en": "“Ne_Ne_Ne” exhibition" },
+      "type": { "ru": "Выставка", "en": "Exhibition" }, "city": { "ru": "Бишкек", "en": "Bishkek" }, "country": "KG", "year": 2017,
+      "description": { "ru": "Выставка современного искусства в «Асанбай центре», 24 сентября — 15 октября 2017.", "en": "Contemporary art exhibition at the Asanbay Centre, 24 September – 15 October 2017." },
+      "aliases": ["Не_Не_Не", "Ne_Ne_Ne"]
+    },
+    {
+      "id": "minus-twenty", "kind": "program",
+      "name": { "ru": "Проект «Минус двадцать»", "en": "“Minus Twenty” project" },
+      "type": { "ru": "Выставочный проект", "en": "Exhibition project" }, "country": null,
+      "description": { "ru": "Проект Гёте-института; в его рамках — выставка «Между прошлым и будущим. Археология актуальности» (Алматы).", "en": "Goethe-Institut project that included “Between Past and Future. Archaeology of the Present” (Almaty)." },
+      "aliases": ["Минус двадцать", "Minus [Tt]wenty"]
+    },
+    {
+      "id": "prosto-ku", "kind": "program",
+      "name": { "ru": "Выставка «Просто Ку»", "en": "“Prosto Ku” exhibition" },
+      "type": { "ru": "Выставка", "en": "Exhibition" }, "city": { "ru": "Караганда", "en": "Karaganda" }, "country": "KZ",
+      "description": { "ru": "Выставка Дешт-и-Арт Центра, кураторы Юлия Сорокина и Александр Мальгаждаров; здесь Юрий Двинянинов показал перформанс «И ещё, ещё раз о нём».", "en": "Desht-i-Art Centre exhibition curated by Yuliya Sorokina and Aleksandr Malgazhdarov, where Yuriy Dvinyaninov performed “And again, once more about him”." },
+      "aliases": ["Просто Ку", "Prosto Ku"]
+    },
+    {
+      "id": "ukca", "kind": "program",
+      "name": { "ru": "UK+CA. Центрально-Азиатский проект", "en": "UK+CA. Central Asian Project" },
+      "type": { "ru": "Международный проект", "en": "International project" }, "country": "GB",
+      "description": { "ru": "Проект 2004–2008 годов; в его рамках Вячеслав Ахунов проводил перформансы в Манчестере и Лондоне.", "en": "2004–2008 project during which Vyacheslav Akhunov performed in Manchester and London." },
+      "aliases": ["UK ?\\+ ?CA"]
+    },
+    {
+      "id": "starter-2006", "kind": "program",
+      "name": { "ru": "Проект «Стартер»", "en": "“Starter” project" },
+      "type": { "ru": "Проект", "en": "Project" }, "country": "TJ", "year": 2006,
+      "description": { "ru": "Проект 2006 года, в рамках которого создан видеоролик «Заратустра» Саблази Шарипова и Джамшеда Холикова.", "en": "2006 project that produced Sablazi Sharipov and Jamshed Kholikov's video “Zarathustra”." },
+      "aliases": ["[«\"]Стартер[»\"]", "[«\"]Starter[»\"]"]
+    },
+    {
+      "id": "museum-space-project", "kind": "program",
+      "name": { "ru": "Проект «Актуальное искусство в музейном пространстве»", "en": "“Contemporary Art in Museum Space” project" },
+      "type": { "ru": "Проект", "en": "Project" }, "country": "TJ",
+      "description": { "ru": "В его рамках — «Доисламское наследие в культуре Таджикистана (не музейная интерпретация)».", "en": "Included “Pre-Islamic Heritage in the Culture of Tajikistan (a non-museum interpretation)”." },
+      "aliases": ["Актуальное искусство в музейном пространстве"]
+    },
+    {
+      "id": "alanika", "kind": "program",
+      "name": { "ru": "Симпозиум «Аланика»", "en": "Alanika symposium" },
+      "type": { "ru": "Симпозиум", "en": "Symposium" }, "country": null,
+      "description": { "ru": "Благодаря симпозиуму коллекция «Остановок» Джамшеда Холикова пополнилась кавказскими фотографиями.", "en": "Through the symposium Jamshed Kholikov added Caucasian photographs to his “Bus Stops” collection." },
+      "aliases": ["Аланика", "Alanika"]
+    },
+    {
+      "id": "edinoe-prostranstvo", "kind": "program",
+      "name": { "ru": "Выставка «Единое пространство» (Таджикистан — Австрия)", "en": "“Common Space” exhibition (Tajikistan – Austria)" },
+      "type": { "ru": "Выставка", "en": "Exhibition" }, "country": "TJ", "year": 2007,
+      "description": { "ru": "Таджикско-австрийская выставка; в архиве — видеорепортаж.", "en": "Tajik–Austrian exhibition; the archive holds a video report." },
+      "aliases": ["Единое пространство"]
+    },
+    {
+      "id": "artbatfest", "kind": "program",
+      "name": { "ru": "Artbat Fest", "en": "Artbat Fest" },
+      "type": { "ru": "Фестиваль", "en": "Festival" }, "city": { "ru": "Алматы", "en": "Almaty" }, "country": "KZ",
+      "description": { "ru": "Алматинский фестиваль современного искусства; Фатима Омир участвовала в 2015–2021 годах.", "en": "Almaty contemporary art festival; Fatima Omir took part between 2015 and 2021." },
+      "aliases": ["Art ?bat ?fest", "ARTBAT"]
+    },
+    {
+      "id": "astana-art-fest", "kind": "program",
+      "name": { "ru": "AstanaArtFest", "en": "AstanaArtFest" },
+      "type": { "ru": "Фестиваль", "en": "Festival" }, "city": { "ru": "Астана", "en": "Astana" }, "country": "KZ",
+      "description": { "ru": "Фестиваль на бульваре Нурлы Жол; Фатима Омир показывала интерактивные инсталляции (2015–2017).", "en": "Festival on Nurly Zhol boulevard; Fatima Omir showed interactive installations (2015–2017)." },
+      "aliases": ["Astana ?Art ?Fest"]
+    },
+    {
+      "id": "april-fools-bishkek", "kind": "program",
+      "name": { "ru": "Конкурс April Fools' (Бишкек)", "en": "April Fools' Competition (Bishkek)" },
+      "type": { "ru": "Ежегодный конкурс", "en": "Annual competition" }, "city": { "ru": "Бишкек", "en": "Bishkek" }, "country": "KG",
+      "description": { "ru": "Ежегодный конкурс; Фатима Омир получала награды в 2016, 2017, 2020 и 2021 годах.", "en": "Annual competition; Fatima Omir received awards in 2016, 2017, 2020 and 2021." },
+      "aliases": ["April Fools"]
+    }
+  ],
+
+  "people": [
+    { "ru": "Виктор Мизиано", "en": "Viktor Misiano", "aliases": ["Мизиано", "Мезиано", "Misiano"], "roles": { "ru": "куратор", "en": "curator" } },
+    { "ru": "Чурек Джамгерчинова", "en": "Churek Djamgerchinova", "aliases": ["Джамгерчинова"] },
+    { "ru": "Асель Акматова", "en": "Asel Akmatova", "aliases": ["Акматова"] },
+    { "ru": "Ербосын Мельдибеков", "en": "Erbossyn Meldibekov", "aliases": ["Мельдибеков"] },
+    { "ru": "Елена Воробьёва", "en": "Elena Vorobyeva", "aliases": ["Елена (и Виктор )?Вороб[ье][её]в", "Елена Воробь"] },
+    { "ru": "Виктор Воробьёв", "en": "Viktor Vorobyev", "aliases": ["Виктор Вороб", "Елена и Виктор Вороб"] },
+    { "ru": "Алмагуль Менлибаева", "en": "Almagul Menlibayeva", "aliases": ["Менлибаев"] },
+    { "ru": "Саид Атабеков", "en": "Said Atabekov", "aliases": ["Атабеков"] },
+    { "ru": "Гульнара Касмалиева", "en": "Gulnara Kasmalieva", "aliases": ["Касмалиев"] },
+    { "ru": "Муратбек Джумалиев", "en": "Muratbek Djumaliev", "aliases": ["Джумалиев"] },
+    { "ru": "Сара Раза", "en": "Sara Raza", "aliases": ["Сара Раза", "Sara Raza"] },
+    { "ru": "Асель Рашидова", "en": "Asel Rashidova", "aliases": ["Рашидова"] },
+    { "ru": "Сауле Сулейменова", "en": "Saule Suleimenova", "aliases": ["Сулейменова"] },
+    { "ru": "Канат Ибрагимов", "en": "Kanat Ibragimov", "aliases": ["Канат Ибрагимов", "К\\. Ибрагимов"] },
+    { "ru": "Сергей Тычина", "en": "Sergey Tychina", "aliases": ["Тычин"] },
+    { "ru": "Диана Кэмпбелл", "en": "Diana Campbell", "aliases": ["Кэмпбелл", "Campbell"] },
+    { "ru": "Кулапат Янтрасаст", "en": "Kulapat Yantrasast", "aliases": ["Янтрасаст", "Yantrasast"] },
+    { "ru": "Умида Алимова", "en": "Umida Alimova", "aliases": ["Умида Алимова"] },
+    { "ru": "Назипа Еженова", "en": "Nazipa Yezhenova", "aliases": ["Еженова"] },
+    { "ru": "Дана Сафарова", "en": "Dana Safarova", "aliases": ["Дана Сафарова", "Сафаровой"] },
+    { "ru": "Лариса Плетникова", "en": "Larisa Pletnikova", "aliases": ["Плетников"] },
+    { "ru": "Георгий Мамедов", "en": "Georgy Mamedov", "aliases": ["Георгий Мамедов"] },
+    { "ru": "Валерия Ибраева", "en": "Valeria Ibraeva", "aliases": ["Ибраев"] },
+    { "ru": "Алим Сабитов", "en": "Alim Sabitov", "aliases": ["Сабитов"] },
+    { "ru": "Александр Мальгаждаров", "en": "Aleksandr Malgazhdarov", "aliases": ["Мальгаждаров"] },
+    { "ru": "Сабина Фогель", "en": "Sabine Vogel", "aliases": ["Сабина Фогель"] },
+    { "ru": "Сергей Стрельцов", "en": "Sergey Streltsov", "aliases": ["Стрельцов"] },
+    { "ru": "Сергей Калмыков", "en": "Sergey Kalmykov", "aliases": ["Калмыков"] },
+    { "ru": "Ляззат Шайкежанова", "en": "Lyazzat Shaikezhanova", "aliases": ["Шайкежанов"] },
+    { "ru": "Владимир Стерлигов", "en": "Vladimir Sterligov", "aliases": ["Стерлигов", "Sterligov"] },
+    { "ru": "Лидия Блинова", "en": "Lidia Blinova", "aliases": ["Блинов", "Лида"] },
+    { "ru": "Урумбай Ахунов", "en": "Urumbay Akhunov", "aliases": ["Урумбай Ахунов"] },
+    { "ru": "Александр Волков", "en": "Aleksandr Volkov", "aliases": ["Александр\\w* Волков"] },
+    { "ru": "Рахим Ахмедов", "en": "Rakhim Akhmedov", "aliases": ["Рахим\\w* Ахмедов"] },
+    { "ru": "Георгий Трякин-Бухаров", "en": "Georgy Tryakin-Bukharov", "aliases": ["Трякин-Бухаров"] },
+    { "ru": "Баходир Мусаев", "en": "Bakhodir Musaev", "aliases": ["Мусаев"] },
+    { "ru": "Саблази Шарипов", "en": "Sablazi Sharipov", "aliases": ["Саблази Шарипов", "Sablazi Sharipov"] },
+    { "ru": "Алексей Румянцев", "en": "Aleksei Rumyantsev", "aliases": ["Алексей Румянцев", "Aleksei Rumyantsev", "Aleksei RUMYANTSEV"] },
+    { "ru": "Инна Кладо", "en": "Inna Klado", "aliases": ["Инна Кладо"] },
+    { "ru": "Стефан Русу", "en": "Stefan Rusu", "aliases": ["Stefan R[Uu][Ss][Uu]"] },
+    { "ru": "Серафима Гацалова", "en": "Serafima Gatzalova", "aliases": ["Serafima GATZALOVA", "Serafima Gatzalova"] },
+    { "ru": "Ирина Юферова", "en": "Irina Yuferova", "aliases": ["Юферов"] },
+    { "ru": "Бахыт Бубиканова", "en": "Bakhyt Bubikanova", "aliases": ["Bakhyt Bubikanova"] },
+    { "ru": "Сауле Дюсенбина", "en": "Saule Duisenbina", "aliases": ["Saule Duisenbina"] },
+    { "ru": "Жанат Баймухаметов", "en": "Zhanat Baimukhametov", "aliases": ["Баймухаметов"] },
+    { "ru": "Паоло Коломбо", "en": "Paolo Colombo", "aliases": ["Коломбо"] },
+    { "ru": "Амир Исаев", "en": "Amir Isaev", "aliases": ["Amir [LlI]saev"] },
+    { "ru": "Катерина Юлдашева", "en": "Katerina Yuldasheva", "aliases": ["[KC]aterina Y(uldasheva|ULDASHEVA)"] },
+    { "ru": "Молдакул Нарымбетов", "en": "Moldakul Narymbetov", "aliases": ["Нарымбетов"] }
+  ],
+
+  "eventPeople": {
+    "tsentralnoaziatskiy-pavilyon-51-ya-venetsianskaya-biennale": {
+      "curator": ["Виктор Мизиано"], "commissioner": ["Чурек Джамгерчинова"],
+      "participant": ["Ербосын Мельдибеков", "Елена Воробьёва", "Виктор Воробьёв", "Алмагуль Менлибаева", "Саид Атабеков", "Гульнара Касмалиева", "Муратбек Джумалиев"],
+      "organizer": ["kurama-art"], "venue": ["palazzo-pisani"], "program": ["venice-biennale"]
+    },
+    "vyacheslav-ahunov-instrumenty-razuma": { "curator": ["Сара Раза"], "organizer": ["cca-tashkent"], "venue": ["palazzo-franchetti"], "program": ["venice-biennale"] },
+    "dokumentatsiya-voobrazhenie-tsentralnoy-azii-na-karte-sovremennogo-iskusstva": {
+      "curator": ["Асель Рашидова"],
+      "participant": ["Алмагуль Менлибаева", "Ербосын Мельдибеков", "Сауле Сулейменова", "Канат Ибрагимов", "Сергей Тычина", "Елена Воробьёва", "Виктор Воробьёв", "kyzyl-traktor"],
+      "venue": ["tselinny"]
+    },
+    "buharskaya-biennale-retsepty-dlya-razbityh-serdets": { "curator": ["Диана Кэмпбелл"], "program": ["bukhara-biennale"] },
+    "vtoraya-buharskaya-biennale": { "artistic director": ["Кулапат Янтрасаст"], "program": ["bukhara-biennale"] }
+  },
+
+  "authorFacts": {
+    "vyacheslav-ahunov": [
+      { "k": "origin", "v": { "ru": "Ош, Киргизская ССР", "en": "Osh, Kirghiz SSR" } },
+      { "k": "education", "v": { "ru": "Художественное училище, Фрунзе (поступил в 1962)", "en": "Art college, Frunze (from 1962)" } },
+      { "k": "education", "v": { "ru": "МГХИ им. Сурикова, Москва (окончил в 1979)", "en": "Surikov Moscow State Art Institute (graduated 1979)" }, "ref": "entity:surikov-institute" },
+      { "k": "member", "v": { "ru": "Союз художников Узбекистана, с 1982", "en": "Union of Artists of Uzbekistan, from 1982" }, "ref": "entity:union-artists-uz" },
+      { "k": "lived", "v": { "ru": "Фергана, затем Ташкент", "en": "Fergana, later Tashkent" } },
+      { "k": "family", "v": { "ru": "Отец и первый учитель — художник Урумбай Ахунов", "en": "Father and first teacher: the painter Urumbay Akhunov" }, "ref": "person:urumbay-akhunov" },
+      { "k": "essay", "v": { "ru": "Умида Алимова", "en": "Umida Alimova" }, "ref": "person:umida-alimova" }
+    ],
+    "rustam-halfin": [
+      { "k": "born", "v": { "ru": "14 октября 1949", "en": "14 October 1949" } },
+      { "k": "died", "v": { "ru": "2008", "en": "2008" } },
+      { "k": "role", "v": { "ru": "Художник, архитектор, куратор", "en": "Artist, architect, curator" } },
+      { "k": "teacher", "v": { "ru": "Учился у В. В. Стерлигова", "en": "Studied with V. V. Sterligov" }, "ref": "person:vladimir-sterligov" },
+      { "k": "family", "v": { "ru": "Жена и соавтор — Лидия Блинова", "en": "Wife and collaborator: Lidia Blinova" }, "ref": "person:lidia-blinova" },
+      { "k": "founded", "v": { "ru": "Галерея LOOK, Алматы", "en": "LOOK Gallery, Almaty" }, "ref": "entity:look-gallery" },
+      { "k": "essay", "v": { "ru": "Назипа Еженова, 2010", "en": "Nazipa Yezhenova, 2010" }, "ref": "person:nazipa-yezhenova" }
+    ],
+    "sergey-maslov": [
+      { "k": "died", "v": { "ru": "2002", "en": "2002" } },
+      { "k": "exhibited", "v": { "ru": "Впервые — Малая Грузинская, Москва, 1981", "en": "First shown at Malaya Gruzinskaya, Moscow, 1981" }, "ref": "entity:maly-gruzinskaya" },
+      { "k": "role", "v": { "ru": "Художник, преподаватель колледжа", "en": "Artist, college teacher" } },
+      { "k": "essay", "v": { "ru": "Елена Воробьёва, 1996", "en": "Elena Vorobyeva, 1996" }, "ref": "person:elena-vorobyeva" }
+    ],
+    "ulan-dzhaparov": [
+      { "k": "born", "v": { "ru": "1960", "en": "1960" } },
+      { "k": "role", "v": { "ru": "Художник, куратор, архитектор, критик, издатель", "en": "Artist, curator, architect, critic, publisher" } },
+      { "k": "founded", "v": { "ru": "Архитектурная студия Museum, Бишкек", "en": "Studio Museum, Bishkek" }, "ref": "entity:studiya-museum" },
+      { "k": "collaborators", "v": { "ru": "Гульнара Касмалиева и Муратбек Джумалиев, Елена и Виктор Воробьёвы", "en": "Gulnara Kasmalieva and Muratbek Djumaliev, Elena and Viktor Vorobyev" } }
+    ],
+    "yuriy-dvinyaninov": [
+      { "k": "died", "v": { "ru": "2 января 2008, Санкт-Петербург (32 года)", "en": "2 January 2008, St Petersburg (aged 32)" } },
+      { "k": "alias", "v": { "ru": "Гном", "en": "Gnom (“Gnome”)" } },
+      { "k": "education", "v": { "ru": "Культпросветучилище, Караганда", "en": "Cultural education college, Karaganda" } },
+      { "k": "group", "v": { "ru": "Группа «Точка» (с Сергеем Стрельцовым)", "en": "Tochka group (with Sergey Streltsov)" }, "ref": "entity:tochka" },
+      { "k": "exhibited", "v": { "ru": "Дешт-и-Арт Центр, Карагандинский музей искусств, Немецкий центр", "en": "Desht-i-Art Centre, Karaganda Museum of Fine Arts, German Centre" }, "ref": "entity:desht-i-art" },
+      { "k": "essay", "v": { "ru": "Дана Сафарова, 2013", "en": "Dana Safarova, 2013" }, "ref": "person:dana-safarova" }
+    ],
+    "dzhamshed-holikov": [
+      { "k": "education", "v": { "ru": "Школа-студия МХАТ, постановочный факультет", "en": "Moscow Art Theatre School, stage design" }, "ref": "entity:mkhat-school" },
+      { "k": "work", "v": { "ru": "Художник-постановщик Молодёжного театра им. Вахидова (8 лет)", "en": "Stage designer at the Vakhidov Youth Theatre (8 years)" }, "ref": "entity:vakhidov-theatre" },
+      { "k": "role", "v": { "ru": "Видео и фотография, с 2004", "en": "Video and photography, since 2004" } },
+      { "k": "exhibited", "v": { "ru": "Центральноазиатский павильон, 52-я и 53-я Венецианские биеннале", "en": "Central Asian Pavilion, 52nd and 53rd Venice Biennales" }, "ref": "entity:venice-biennale" },
+      { "k": "work", "v": { "ru": "Менеджер проектов Душанбе Арт Граунд", "en": "Project manager, Dushanbe Art Ground" }, "ref": "entity:dushanbe-art-graund" },
+      { "k": "essay", "v": { "ru": "Георгий Мамедов", "en": "Georgy Mamedov" }, "ref": "person:georgy-mamedov" }
+    ],
+    "fatima-omir": [
+      { "k": "education", "v": { "ru": "Алматинское художественное училище им. О. Тансыкбаева, 1992–1996", "en": "O. Tansykbaev Almaty Art College, 1992–1996" }, "ref": "entity:tansykbaev-college" },
+      { "k": "education", "v": { "ru": "КазНАИ им. Т. Жургенова, живопись и скульптура, 1996–2002", "en": "T. Zhurgenov Kazakh National Academy of Arts, painting and sculpture, 1996–2002" }, "ref": "entity:kaznai" },
+      { "k": "education", "v": { "ru": "«ШХЖ», вольный слушатель, 2017–2019", "en": "School of Artistic Gesture, auditor, 2017–2019" }, "ref": "entity:shkhzh" },
+      { "k": "member", "v": { "ru": "Союз художников Республики Казахстан, с 2010", "en": "Union of Artists of the Republic of Kazakhstan, since 2010" }, "ref": "entity:union-artists-kz" },
+      { "k": "group", "v": { "ru": "Meta-Punk-Quartet", "en": "Meta-Punk-Quartet" }, "ref": "entity:meta-punk-quartet" }
+    ],
+    "gamal-bokonbaev": [
+      { "k": "role", "v": { "ru": "Куратор, культуролог, арт-критик, издатель", "en": "Curator, cultural scholar, art critic, publisher" } }
+    ],
+    "yuliya-sorokina": [
+      { "k": "role", "v": { "ru": "Куратор, художник; куратор проекта Astral Nomads", "en": "Curator and artist; curator of Astral Nomads" } },
+      { "k": "group", "v": { "ru": "Meta-Punk-Quartet", "en": "Meta-Punk-Quartet" }, "ref": "entity:meta-punk-quartet" }
+    ],
+    "suraye-tuychieva": [
+      { "k": "work", "v": { "ru": "Куратор образовательной программы и координатор мобильного воркшопа Душанбе Арт Граунд", "en": "Curator of the education section and mobile workshop coordinator, Dushanbe Art Ground" }, "ref": "entity:dushanbe-art-graund" }
+    ]
+  }
+}

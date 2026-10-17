@@ -77,6 +77,7 @@ export function Explore() {
       <FacetGroup title={t('country', lang)} lang={lang} selected={f.facets.country} onToggle={(v) => toggle('country', v)} options={opts('country', archive.terms.country.values())} />
       <FacetGroup title={t('place', lang)} lang={lang} limit={5} selected={f.facets.place} onToggle={(v) => toggle('place', v)} options={opts('place', archive.terms.place.values())} />
       <FacetGroup title={t('libraryType', lang)} lang={lang} selected={f.facets.ltype} onToggle={(v) => toggle('ltype', v)} options={opts('ltype', archive.terms.libraryType.values())} />
+      <FacetGroup title={lang === 'ru' ? 'Институции и проекты' : 'Institutions & projects'} lang={lang} limit={6} selected={f.facets.ent} onToggle={(v) => toggle('ent', v)} options={opts('ent', archive.terms.entity.values())} />
       <FacetGroup title={t('courtesy', lang)} lang={lang} limit={5} selected={f.facets.courtesy} onToggle={(v) => toggle('courtesy', v)} options={opts('courtesy', archive.terms.courtesy.values())} />
       <FacetGroup
         title={t('format', lang)}
@@ -265,6 +266,8 @@ function activeChips(f: FilterState, terms: ReturnType<typeof useArchive>['archi
         return pick(terms.courtesy.get(v)?.label, lang) || v
       case 'ltype':
         return pick(terms.libraryType.get(v)?.label, lang) || v
+      case 'ent':
+        return pick(terms.entity.get(v)?.label, lang) || v
       case 'has':
         return t(v === 'pdf' ? 'hasPdf' : v === 'video' ? 'hasVideo' : 'hasImage', lang)
     }

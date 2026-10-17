@@ -10,6 +10,7 @@ import { Home } from './pages/Home'
 import { InstitutionPage, Institutions } from './pages/Institutions'
 import { Item } from './pages/Item'
 import { NotFound } from './pages/NotFound'
+import { People, PersonPage } from './pages/People'
 import './styles.css'
 
 function App() {
@@ -28,6 +29,8 @@ function App() {
         <Route path="events/:slug" element={<EventPage />} />
         <Route path="institutions" element={<Institutions />} />
         <Route path="institutions/:slug" element={<InstitutionPage />} />
+        <Route path="people" element={<People />} />
+        <Route path="people/:id" element={<PersonPage />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>

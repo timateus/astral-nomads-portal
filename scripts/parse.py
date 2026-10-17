@@ -24,6 +24,7 @@ FIELD_KEYS = {
     "место создания": "place", "place of creation": "place",
     "предоставлено": "courtesy", "courtesy": "courtesy", "provided by": "courtesy",
     "ключевые слова": "keywords", "keywords": "keywords",
+    "ключевые слова на языке оригинала": "keywordsOriginal", "keywords in original language": "keywordsOriginal",
     "уровень доступа": "access", "access level": "access",
     "описание": "description", "description": "description",
     "редакторы": "editors", "editors": "editors",
@@ -35,6 +36,9 @@ FIELD_KEYS = {
     "количество страниц": "pages", "number of pages": "pages", "pages": "pages",
     "тираж": "printRun", "print run": "printRun", "circulation": "printRun",
     "обложка": "cover", "cover": "cover",
+    # upper-case variant layout ("АВТОР: <strong>…</strong>")
+    "автор": "creators", "author": "creators", "title in the original language": "originalTitle",
+    "technique": "medium", "размер": "dimensions", "size": "dimensions", "год": "yearText", "year": "yearText",
 }
 
 
@@ -81,13 +85,38 @@ def split_list(v):
     return [x.strip(" .") for x in re.split(r"[;,]\s*", v or "") if x.strip(" .")]
 
 
+# Credit lines that appear in colophons / video descriptions ("Монтаж: …", "Concept & Editor: …")
+CREDIT_ROLE = re.compile(
+    r"^(иде[яи]|монтаж|куратор\w*|комиссар|организатор\w*|координатор\w*|редактор\w*|дизайн\w*|перевод\w*|фото\w*|оператор\w*|"
+    r"музык\w*|исполн\w*|перформанс|участник\w*|concept|.*editor|.*design|translations?|image credits|project organi[sz]er|"
+    r"proofreading.*|texts?( by)?|projects and contributions by|project (curator|manager|assistant)|assistant|coordinators? .*|curator of .*|credit images|[il]mage credits|curators?|participants|camera|music|performers?|idea|editing)$",
+    re.I,
+)
+
+
 def parse_fields(article):
-    fields = {}
-    for label, value in re.findall(r"<p>\s*<strong>(.*?)</strong>(.*?)</p>", article or "", re.S):
-        key = FIELD_KEYS.get(text(label).rstrip(":").strip().lower())
-        if key:
-            fields[key] = text(value).lstrip(": ").strip()
-    return fields
+    """Metadata lines from a material description.
+
+    The source uses three layouts: "<strong>Label:</strong> value", "LABEL: <strong>value</strong>"
+    and plain "Label: value". Returns (fields, credits, leftover free-text lines).
+    """
+    fields, credits, rest = {}, [], []
+    chunks = re.split(r"</p>|<br\s*/?>|\n", article or "")
+    for chunk in chunks:
+        line = text(chunk)
+        if not line:
+            continue
+        # colophon lines without a colon: "Texts by A, B", "Proofreading (English version), A, B"
+        line = re.sub(r"^(Texts by|Projects and contributions by|Proofreading \(English version\)),?\s+", r"\1: ", line)
+        m = re.match(r"^([^:]{2,60}?)\s*:\s*(.*)$", line, re.S)
+        label = m.group(1).strip().lower() if m else ""
+        if m and label in FIELD_KEYS:
+            fields.setdefault(FIELD_KEYS[label], m.group(2).strip())
+        elif m and m.group(2).strip() and CREDIT_ROLE.match(label):
+            credits.append([m.group(1).strip(), m.group(2).strip().rstrip(".")])
+        else:
+            rest.append(line)
+    return fields, credits, rest
 
 
 def page_body(s):
@@ -145,7 +174,12 @@ def parse_material(section, slug, ru, en):
             continue
         body = page_body(s)
         article = first(r'<article class="material-description article">(.*?)</article>', body) or ""
-        by_lang[lang] = {"fields": parse_fields(article), "h1": text(first(r'<h1 class="page-title">(.*?)</h1>', body)),
+        fields, credits, rest = parse_fields(article)
+        h1 = text(first(r'<h1 class="page-title">(.*?)</h1>', body))
+        rest = [r for r in rest if r.strip(' "«».') != h1.strip(' "«».')]
+        if rest and "description" not in fields:
+            fields["description"] = "\n".join(rest)
+        by_lang[lang] = {"fields": fields, "credits": credits, "h1": text(first(r'<h1 class="page-title">(.*?)</h1>', body)),
                          "caption": text(first(r'<p class="material-caption">(.*?)</p>', body) or "")}
     ru_body = page_body(ru)
 
@@ -153,7 +187,15 @@ def parse_material(section, slug, ru, en):
         v = {l: by_lang[l]["fields"].get(key) for l in by_lang if by_lang[l]["fields"].get(key)}
         return v or None
 
-    out["title"] = {l: by_lang[l]["fields"].get("title") or by_lang[l]["h1"] for l in by_lang}
+    # the page heading is the canonical title; a differing metadata title becomes the original title
+    out["title"] = {l: by_lang[l]["h1"] or by_lang[l]["fields"].get("title") for l in by_lang}
+    for l in by_lang:
+        ft = by_lang[l]["fields"].get("title")
+        if ft and ft != out["title"][l] and "originalTitle" not in by_lang[l]["fields"]:
+            by_lang[l]["fields"]["originalTitle"] = ft
+    credits = {l: by_lang[l]["credits"] for l in by_lang if by_lang[l]["credits"]}
+    if credits:
+        out["credits"] = credits
     for key in ("originalTitle", "medium", "dimensions", "yearText", "place", "courtesy", "description",
                 "editors", "languages", "artists", "publicationCountry", "publisher", "cover", "creators"):
         v = bi(key)
@@ -283,7 +325,10 @@ def main():
     if not sitemap:
         sys.exit("run scripts/crawl.py first")
     paths = [re.sub(r"^" + re.escape(BASE), "", u) for u in re.findall(r"<loc>([^<]+)</loc>", sitemap)]
-    paths = [p for p in paths if not p.startswith("/en")]
+    manifest = os.path.join(ROOT, ".cache", "paths.json")
+    if os.path.exists(manifest):
+        paths += json.load(open(manifest, encoding="utf-8"))
+    paths = list(dict.fromkeys(p for p in paths if not p.startswith("/en")))
 
     def pair(path):
         return read(cache_name(path)), read(cache_name("/en" + path))

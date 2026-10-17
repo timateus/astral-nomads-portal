@@ -5,8 +5,9 @@ A new discovery interface for the [Astral Nomads](https://astralnomads.panther.k
 The source site is server-rendered and has no public JSON API, so this repo contains:
 
 1. **`scripts/crawl.py`** — politely fetches every page listed in the sitemap (RU + EN), plus paginated and filtered listings, into `.cache/pages/` (one request at a time, 0.4 s delay, cached pages are skipped).
-2. **`scripts/parse.py`** — turns the cached HTML into a single bilingual dataset, `public/data/archive.json` (materials, authors, institutions, events).
-3. **A Vite + React app** that loads that JSON and does all search and filtering client-side.
+2. **`scripts/parse.py`** — turns the cached HTML into a single bilingual dataset, `public/data/archive.json` (materials, authors, institutions, events). It reads all three metadata layouts the source uses, keeps colophon credits (idea, editing, design, translations…) and falls back to free text as the description.
+3. **`scripts/enrich.py`** + **`scripts/enrichment.json`** — links the archive to the institutions, groups, projects, venues, schools and people named in its own texts (see below).
+4. **A Vite + React app** that loads that JSON and does all search and filtering client-side.
 
 ```bash
 npm install
@@ -27,6 +28,14 @@ npm run build  # static site in dist/
 - **Author pages** with work counts, years active, themes, and a works grid filtered by section and year.
 - **Discovery-first home page**: decades, themes, mediums, "surprise me".
 - RU/EN switch, dark mode, mobile filter drawer, keyboard access.
+
+## Enrichment: institutions and people from the archive's own texts
+
+The source site has pages for only 3 institutions, but its materials, biographies and event descriptions name many more. `scripts/enrichment.json` is a hand-curated list, built by reading those texts, of 64 institutions, groups, projects/exhibitions, venues and schools (with name variants for matching), structured author facts (dates, education, memberships, groups, essay authors) and event roles (curators, participants, organisers, venues). Only facts stated in the archive are recorded.
+
+`enrich.py` matches them across every text field and records the role of each link: provided by, publisher, organiser, venue, part of, mention… It also builds a people index (132 people) from catalogue artist lists, editors, credits and event texts, merging spelling variants («Е. Мельдибеков» = «Ербосын Мельдибеков», Bokonbaev/Bokonbayev).
+
+In the app this adds an **Institutions & communities** index and pages, a **People** index and pages, an "Institutions & projects" filter in Explore, a "People & institutions" block on item pages, and facts plus connections on author and event pages. To add an entity or fix a link, edit `enrichment.json` and run `python3 -I scripts/enrich.py` after `parse.py`.
 
 ## Data notes
 

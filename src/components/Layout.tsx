@@ -29,8 +29,9 @@ export function Layout() {
   const nav = [
     ['/explore', t('explore', lang)],
     ['/authors', t('authors', lang)],
-    ['/events', t('events', lang)],
+    ['/people', lang === 'ru' ? 'Персоналии' : 'People'],
     ['/institutions', t('institutions', lang)],
+    ['/events', t('events', lang)],
   ] as const
 
   return (

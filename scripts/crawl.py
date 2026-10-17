@@ -2,7 +2,7 @@
 
 Polite: one request at a time with a delay; already-cached pages are skipped.
 """
-import os, re, sys, time, hashlib, urllib.request
+import os, re, sys, time, json, hashlib, urllib.request
 
 BASE = "https://astralnomads.panther.kz"
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -49,13 +49,28 @@ def main():
                     for n in range(2, max([int(x) for x in re.findall(r"[?&]page=(\d+)", sub)], default=1) + 1):
                         paths.append(f"{lang}/{section}?material_type={v}&page={n}")
     paths = list(dict.fromkeys(paths))
-    for i, p in enumerate(paths):
+    seen = set(paths)
+    i = 0
+    # the sitemap is incomplete (e.g. some events are only linked from other pages),
+    # so also follow links to detail pages found on every fetched page
+    while i < len(paths):
+        p = paths[i]
+        i += 1
         try:
-            fetch(p)
+            body = fetch(p)
         except Exception as e:
             print("FAIL", p, e, file=sys.stderr)
+            continue
+        for link in re.findall(r'href="(?:' + re.escape(BASE) + r')?(/(?:en/)?(?:library|artifacts|multimedia|authors|institutions|events)/[^"?#/]+)"', body):
+            for variant in (link, "/en" + link if not link.startswith("/en/") else link[3:]):
+                if variant not in seen:
+                    seen.add(variant)
+                    paths.append(variant)
+                    print("discovered", variant, flush=True)
         if i % 50 == 0:
             print(f"{i}/{len(paths)}", flush=True)
+    with open(os.path.join(ROOT, ".cache", "paths.json"), "w") as f:
+        json.dump(paths, f, ensure_ascii=False, indent=0)
     print("done", len(paths))
 
 

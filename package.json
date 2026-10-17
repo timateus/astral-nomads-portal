@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "data": "python3 -I scripts/crawl.py && python3 -I scripts/parse.py"
+    "data": "python3 -I scripts/crawl.py && python3 -I scripts/parse.py && python3 -I scripts/enrich.py"
   },
   "dependencies": {
     "minisearch": "^7.2.0",

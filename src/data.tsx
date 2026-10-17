@@ -1,6 +1,6 @@
 import MiniSearch from 'minisearch'
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import type { Author, Bi, Lang, Material, RawArchive, RawMaterial, Term } from './types'
+import type { ArchiveEvent, Author, Bi, Entity, Lang, Material, Person, RawArchive, RawMaterial, Ref, Term } from './types'
 
 /** Medium categories, matched against the free-text "technique" field in both languages. */
 const MEDIUMS: { key: string; label: Bi; re: RegExp }[] = [
@@ -19,8 +19,22 @@ const MEDIUMS: { key: string; label: Bi; re: RegExp }[] = [
 
 export const TYPE_ORDER = ['artifact', 'library', 'multimedia'] as const
 
+export interface Backlinks {
+  materials: { item: Material; ref: Ref }[]
+  authors: { item: Author; ref: Ref }[]
+  events: { item: ArchiveEvent; ref: Ref }[]
+  entities: { item: Entity; ref: Ref }[]
+}
+
 export interface Archive {
   raw: RawArchive
+  entities: Entity[]
+  entityById: Map<string, Entity>
+  people: Person[]
+  personById: Map<string, Person>
+  /** who links to an entity / a person, with the role of each link */
+  entityLinks: Map<string, Backlinks>
+  personLinks: Map<string, Backlinks>
   materials: Material[]
   byId: Map<string, Material>
   authors: Author[]
@@ -32,6 +46,7 @@ export interface Archive {
     courtesy: Map<string, Term>
     country: Map<string, Term>
     libraryType: Map<string, Term>
+    entity: Map<string, Term>
   }
   yearMin: number
   yearMax: number
@@ -99,8 +114,32 @@ function build(raw: RawArchive): Archive {
       if (!courtesy.has(courtesyKey)) courtesy.set(courtesyKey, { key: courtesyKey, label: { ru: capitalize(cr), en: m.courtesy?.en ? capitalize(m.courtesy.en) : undefined } })
     }
 
-    return { ...m, materialType: m.type === 'library' ? m.materialType ?? 'other' : m.materialType, mediums, keywordKeys, placeKey, courtesyKey }
+    const entityKeys = (m.refs?.entities ?? []).map((r) => r.id)
+    return { ...m, materialType: m.type === 'library' ? m.materialType ?? 'other' : m.materialType, mediums, keywordKeys, placeKey, courtesyKey, entityKeys }
   })
+
+  const entities = raw.entities ?? []
+  const people = raw.people ?? []
+  const entityById = new Map(entities.map((e) => [e.id, e]))
+  const personById = new Map(people.map((p) => [p.id, p]))
+  const entityLinks = new Map<string, Backlinks>()
+  const personLinks = new Map<string, Backlinks>()
+  const slot = (map: Map<string, Backlinks>, id: string) => {
+    let b = map.get(id)
+    if (!b) map.set(id, (b = { materials: [], authors: [], events: [], entities: [] }))
+    return b
+  }
+  const collect = <T extends { refs?: RawMaterial['refs'] }>(items: T[], key: keyof Backlinks) => {
+    for (const item of items) {
+      for (const ref of item.refs?.entities ?? []) (slot(entityLinks, ref.id)[key] as unknown as { item: T; ref: Ref }[]).push({ item, ref })
+      for (const ref of item.refs?.people ?? []) (slot(personLinks, ref.id)[key] as unknown as { item: T; ref: Ref }[]).push({ item, ref })
+    }
+  }
+  collect(materials, 'materials')
+  collect(raw.authors, 'authors')
+  collect(raw.events, 'events')
+  collect(entities, 'entities')
+  const entity = new Map<string, Term>(entities.map((e) => [e.id, { key: e.id, label: e.name }]))
 
   const years = materials.map((m) => m.year).filter((y): y is number => y != null)
 
@@ -122,7 +161,14 @@ function build(raw: RawArchive): Archive {
         medium: both(m.medium),
         description: both(m.description),
         place: both(m.place),
-        extra: `${both(m.courtesy)} ${both(m.publisher)} ${both(m.artists)} ${m.year ?? ''}`,
+        extra: [
+          both(m.courtesy),
+          both(m.publisher),
+          both(m.artists),
+          m.year ?? '',
+          ...(m.refs?.entities ?? []).map((r) => both(raw.entities?.find((e) => e.id === r.id)?.name)),
+          ...(m.refs?.people ?? []).map((r) => both(raw.people?.find((p) => p.id === r.id)?.name)),
+        ].join(' '),
       }
     }),
   )
@@ -133,7 +179,13 @@ function build(raw: RawArchive): Archive {
     byId: new Map(materials.map((m) => [m.id, m])),
     authors: raw.authors,
     authorById,
-    terms: { medium, keyword, place, courtesy, country, libraryType },
+    terms: { medium, keyword, place, courtesy, country, libraryType, entity },
+    entities,
+    entityById,
+    people,
+    personById,
+    entityLinks,
+    personLinks,
     yearMin: Math.min(...years),
     yearMax: Math.max(...years),
     search,
@@ -211,6 +263,10 @@ export function useArchive() {
 
 export function materialPath(m: { type: string; slug: string }) {
   return `/item/${m.type}/${m.slug}`
+}
+
+export function personPath(p: Person) {
+  return p.authorId ? `/authors/${p.authorId}` : `/people/${p.id}`
 }
 
 export function decadeOf(year: number) {

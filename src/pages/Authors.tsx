@@ -8,6 +8,9 @@ import { pick, plural, t, worksForms } from '../i18n'
 import type { Material } from '../types'
 import { NotFound } from './NotFound'
 import { EventCard } from './Events'
+import { EntityChip, PersonChip, Snippets } from '../components/Links'
+import { FACT_LABELS } from '../roles'
+import { personPath } from '../data'
 
 function worksOf(materials: Material[], id: string) {
   return materials.filter((m) => m.authorIds.includes(id))
@@ -81,7 +84,16 @@ export function AuthorPage() {
   for (const w of works) if (w.year) totals.set(w.year, (totals.get(w.year) ?? 0) + 1)
   for (const w of byType) if (w.year) counts.set(w.year, (counts.get(w.year) ?? 0) + 1)
   const ys = works.map((w) => w.year).filter((y): y is number => y != null)
-  const events = archive.raw.events.filter((e) => e.authorIds.includes(a.id))
+  const backlinks = archive.personLinks.get(a.id)
+  const events = [...new Set([...archive.raw.events.filter((e) => e.authorIds.includes(a.id)), ...(backlinks?.events ?? []).map((x) => x.item)])]
+  const facts = a.facts ?? []
+  const refEntities = (a.refs?.entities ?? []).map((r) => ({ e: archive.entityById.get(r.id), role: r.role })).filter((x) => x.e)
+  const refPeople = (a.refs?.people ?? []).map((r) => ({ p: archive.personById.get(r.id), role: r.role })).filter((x) => x.p)
+  const elsewhere = [
+    ...(backlinks?.materials ?? []).map(({ item, ref }) => ({ to: `/item/${item.type}/${item.slug}`, title: pick(item.title, lang), snippet: ref.snippet, role: ref.role })),
+    ...(backlinks?.authors ?? []).map(({ item, ref }) => ({ to: `/authors/${item.slug}`, title: pick(item.name, lang), snippet: ref.snippet, role: ref.role })),
+    ...(backlinks?.entities ?? []).map(({ item, ref }) => ({ to: `/institutions/${item.id}`, title: pick(item.name, lang), snippet: undefined, role: ref.role })),
+  ]
   const themes = new Map<string, number>()
   for (const w of works) for (const k of w.keywordKeys) themes.set(k, (themes.get(k) ?? 0) + 1)
   const bio = pick(a.bio, lang)
@@ -121,6 +133,20 @@ export function AuthorPage() {
               </div>
             ))}
           </dl>
+          {facts.length > 0 && (
+            <dl className="meta facts">
+              {facts.map((f, i) => {
+                const [kind, target] = f.ref?.split(':') ?? []
+                const to = kind === 'entity' ? `/institutions/${target}` : kind === 'person' && archive.personById.get(target) ? personPath(archive.personById.get(target)!) : undefined
+                return (
+                  <div key={i}>
+                    <dt>{FACT_LABELS[f.k]?.[lang] ?? f.k}</dt>
+                    <dd>{to ? <Link to={to}>{pick(f.v, lang)}</Link> : pick(f.v, lang)}</dd>
+                  </div>
+                )
+              })}
+            </dl>
+          )}
         </div>
       </header>
 
@@ -181,6 +207,34 @@ export function AuthorPage() {
               <EventCard key={e.id} e={e} />
             ))}
           </div>
+        </section>
+      )}
+
+      {(refEntities.length > 0 || refPeople.length > 0) && (
+        <section>
+          <div className="section-head">
+            <h2>{lang === 'ru' ? 'Связи' : 'Connections'}</h2>
+          </div>
+          <p className="muted section-note">
+            {lang === 'ru' ? 'Институции, группы, проекты и люди из биографии и текстов об авторе.' : 'Institutions, groups, projects and people named in the biography and essays.'}
+          </p>
+          <div className="chip-links">
+            {refEntities.map(({ e, role }) => (
+              <EntityChip key={e!.id} e={e!} role={role === 'mention' ? undefined : role} lang={lang} />
+            ))}
+            {refPeople.map(({ p, role }) => (
+              <PersonChip key={p!.id} p={p!} role={role} lang={lang} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {elsewhere.length > 0 && (
+        <section>
+          <div className="section-head">
+            <h2>{lang === 'ru' ? 'Упоминается в архиве' : 'Elsewhere in the archive'}</h2>
+          </div>
+          <Snippets items={elsewhere} lang={lang} />
         </section>
       )}
 

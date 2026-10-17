@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Shelf } from '../components/Cards'
 import { Icon } from '../components/Icons'
 import { Lightbox } from '../components/Lightbox'
+import { RefChips } from '../components/Links'
 import { Thumb } from '../components/Thumb'
 import { materialPath, useArchive } from '../data'
 import { exploreLink, related } from '../filters'
@@ -59,19 +60,20 @@ export function Item() {
   const title = pick(m.title, lang) || t('untitled', lang)
   const vid = m.video ? youtubeId(m.video) : undefined
   const authors = m.authorIds.map((id) => archive.authorById.get(id)!).filter(Boolean)
-  const institutions = m.institutionIds.map((id) => archive.raw.institutions.find((i) => i.id === id)!).filter(Boolean)
   const section = m.type
 
-  const rows: [StringKey, ReactNode][] = []
+  const rows: [string, ReactNode][] = []
   const add = (k: StringKey, v: Bi | string | undefined, link?: string) => {
     const s = typeof v === 'string' ? v : pick(v, lang)
-    if (s) rows.push([k, link ? <Link to={link}>{s}</Link> : s])
+    if (s) rows.push([t(k, lang), link ? <Link to={link}>{s}</Link> : s])
   }
+  // people listed as chips below make the long name lists redundant
+  const listedPeople = (m.refs?.people ?? []).some((r) => r.role === 'artist')
   if (pick(m.originalTitle, lang) !== title) add('originalTitle', m.originalTitle)
-  if (!authors.length) add('creators', m.creators)
+  if (!authors.length && !listedPeople) add('creators', m.creators)
   if (m.mediums.length) {
     rows.push([
-      'medium',
+      t('medium', lang),
       <>
         {pick(m.medium, lang)}
         <span className="dd-tags">
@@ -85,11 +87,11 @@ export function Item() {
     ])
   } else add('medium', m.medium)
   add('dimensions', m.dimensions)
-  if (m.year) rows.push(['yearCreated', <Link to={exploreLink({}, { from: m.year, to: m.year })}>{pick(m.yearText, lang) || m.year}</Link>])
+  if (m.year) rows.push([t('yearCreated', lang), <Link to={exploreLink({}, { from: m.year, to: m.year })}>{pick(m.yearText, lang) || m.year}</Link>])
   add('place', m.place, m.placeKey ? exploreLink({ place: [m.placeKey] }) : undefined)
   if (m.country) add('country', archive.terms.country.get(m.country)?.label, exploreLink({ country: [m.country] }))
   add('editors', m.editors)
-  add('artists', m.artists)
+  if (!listedPeople) add('artists', m.artists)
   add('publisher', m.publisher)
   add('languages', m.languages)
   add('pages', m.pages)
@@ -97,6 +99,8 @@ export function Item() {
   add('cover', m.cover)
   if (m.materialType && m.materialType !== 'other') add('libraryType', archive.terms.libraryType.get(m.materialType)?.label, exploreLink({ ltype: [m.materialType] }))
   add('courtesy', m.courtesy, m.courtesyKey ? exploreLink({ courtesy: [m.courtesyKey] }) : undefined)
+  for (const [role, value] of m.credits?.[lang] ?? m.credits?.[lang === 'ru' ? 'en' : 'ru'] ?? []) rows.push([role, value])
+  const hasRefs = (m.refs?.entities?.length ?? 0) + (m.refs?.people?.length ?? 0) > 0
 
   return (
     <article className="item">
@@ -172,12 +176,10 @@ export function Item() {
           <h1 className="item-title">{title}</h1>
           {authors.length > 0 && (
             <div className="people">
-              {[...authors, ...institutions].map((p) => {
-                const isAuthor = 'photo' in p || 'bio' in p
-                const img = 'photo' in p ? p.photo : 'logo' in p ? p.logo : undefined
+              {authors.map((p) => {
                 return (
-                  <Link key={p.id} to={`/${isAuthor ? 'authors' : 'institutions'}/${p.slug}`} className="person">
-                    {img ? <img src={img} alt="" /> : <span className="person-ph" />}
+                  <Link key={p.id} to={`/authors/${p.slug}`} className="person">
+                    {p.photo ? <img src={p.photo} alt="" /> : <span className="person-ph" />}
                     <span>
                       <strong>{pick(p.name, lang)}</strong>
                       <small>{pick(p.location, lang)}</small>
@@ -189,9 +191,9 @@ export function Item() {
           )}
           {pick(m.description, lang) && <p className="item-desc">{pick(m.description, lang)}</p>}
           <dl className="meta">
-            {rows.map(([k, v]) => (
-              <div key={k}>
-                <dt>{t(k, lang)}</dt>
+            {rows.map(([k, v], i) => (
+              <div key={`${k}-${i}`}>
+                <dt>{k}</dt>
                 <dd>{v}</dd>
               </div>
             ))}
@@ -203,6 +205,12 @@ export function Item() {
                   #{pick(archive.terms.keyword.get(k)?.label, lang)}
                 </Link>
               ))}
+            </div>
+          )}
+          {hasRefs && (
+            <div className="item-refs">
+              <h2 className="facet-title">{lang === 'ru' ? 'Люди и институции' : 'People & institutions'}</h2>
+              <RefChips refs={m.refs} lang={lang} />
             </div>
           )}
           <a className="text-link source-link" href={m.url} target="_blank" rel="noopener">

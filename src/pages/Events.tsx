@@ -3,6 +3,7 @@ import { useArchive } from '../data'
 import { pick, t } from '../i18n'
 import type { ArchiveEvent } from '../types'
 import { NotFound } from './NotFound'
+import { RefChips } from '../components/Links'
 
 /** Status from the dates (the source labels go stale), falling back to the label. */
 export function eventStatus(e: ArchiveEvent, today = new Date().toISOString().slice(0, 10)): 'upcoming' | 'now' | 'past' {
@@ -59,7 +60,6 @@ export function EventPage() {
   const e = archive.raw.events.find((x) => x.slug === slug)
   if (!e) return <NotFound />
   const status = eventStatus(e)
-  const people = e.authorIds.map((id) => archive.authorById.get(id)).filter(Boolean)
   const others = archive.raw.events.filter((x) => x.id !== e.id)
   return (
     <div className="page event">
@@ -88,22 +88,12 @@ export function EventPage() {
         </div>
       </header>
       <div className="prose event-body" dangerouslySetInnerHTML={{ __html: pick(e.description, lang) }} />
-      {people.length > 0 && (
+      {(e.refs?.people?.length ?? 0) + (e.refs?.entities?.length ?? 0) > 0 && (
         <section>
           <div className="section-head">
-            <h2>{t('participants', lang)}</h2>
+            <h2>{lang === 'ru' ? 'Участники и институции' : 'People & institutions'}</h2>
           </div>
-          <div className="people people--wide">
-            {people.map((p) => (
-              <Link key={p!.id} to={`/authors/${p!.slug}`} className="person">
-                {p!.photo ? <img src={p!.photo} alt="" /> : <span className="person-ph" />}
-                <span>
-                  <strong>{pick(p!.name, lang)}</strong>
-                  <small>{pick(p!.location, lang)}</small>
-                </span>
-              </Link>
-            ))}
-          </div>
+          <RefChips refs={e.refs} lang={lang} />
         </section>
       )}
       <section>

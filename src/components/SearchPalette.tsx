@@ -52,8 +52,11 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
     for (const e of archive.raw.events) {
       if (has(e.title.ru) || has(e.title.en)) out.push({ group: t('events', lang), label: pick(e.title, lang), sub: pick(e.dateText, lang), image: e.image, to: `/events/${e.slug}` })
     }
-    for (const i of archive.raw.institutions) {
-      if (has(i.name.ru) || has(i.name.en)) out.push({ group: t('institutions', lang), label: pick(i.name, lang), sub: pick(i.location, lang), image: i.logo, to: `/institutions/${i.slug}` })
+    for (const e of archive.entities) {
+      if (has(e.name.ru) || has(e.name.en)) out.push({ group: t('institutions', lang), label: pick(e.name, lang), sub: [pick(e.type, lang), pick(e.location, lang)].filter(Boolean).join(' · '), image: e.logo, to: `/institutions/${e.id}` })
+    }
+    for (const p of archive.people) {
+      if (!p.authorId && (has(p.name.ru) || has(p.name.en))) out.push({ group: lang === 'ru' ? 'Персоналии' : 'People', label: pick(p.name, lang), sub: pick(p.name, lang === 'ru' ? 'en' : 'ru'), to: `/people/${p.id}` })
     }
     const grouped = out.slice(0, 12)
     const ids = archive.search.search(q.trim()).slice(0, 8)
