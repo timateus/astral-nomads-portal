@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
-import { personPath, useArchive, visibleRefs } from '../data'
+import { materialPath, personPath, useArchive, visibleRefs } from '../data'
 import { pick } from '../i18n'
 import { KIND_LABELS, roleLabel } from '../roles'
-import type { Entity, Lang, Person, Ref } from '../types'
+import type { Entity, Lang, Person, Ref, Source } from '../types'
 
 const MINED_TITLE: Record<Lang, string> = {
   ru: 'Дополнено нами по текстам архива: на исходном сайте этих данных в таком виде нет',
@@ -101,5 +101,43 @@ export function Snippets({ items, lang }: { items: { to: string; title: string; 
         </li>
       ))}
     </ul>
+  )
+}
+
+/** Where in the archive's PDFs a curated entity or person is named (page references). */
+export function PdfSources({ sources, lang }: { sources?: Source[]; lang: Lang }) {
+  const { archive } = useArchive()
+  if (!sources?.length) return null
+  return (
+    <section>
+      <div className="section-head">
+        <h2>
+          {lang === 'ru' ? 'Источники в PDF' : 'Sources in PDFs'} <MinedMark lang={lang} />
+        </h2>
+      </div>
+      <ul className="pdf-sources">
+        {sources.map((s, i) => {
+          const m = archive.byId.get(s.material)
+          return (
+            <li key={i}>
+              {m ? (
+                <Link to={materialPath(m)} className="text-link">
+                  {pick(m.title, lang)}
+                </Link>
+              ) : (
+                <span>{s.material}</span>
+              )}
+              <span className="pdf-page">{lang === 'ru' ? `с. ${s.page}` : `p. ${s.page}`}</span>
+              {m?.pdf && (
+                <a href={m.pdf} rel="nofollow" className="muted">
+                  PDF ↓
+                </a>
+              )}
+              {s.note && <span className="pdf-note">{s.note}</span>}
+            </li>
+          )
+        })}
+      </ul>
+    </section>
   )
 }

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { MaterialCard } from '../components/Cards'
-import { EntityChip, MinedHidden, MinedMark, Snippets } from '../components/Links'
+import { EntityChip, MinedHidden, MinedMark, PdfSources, Snippets } from '../components/Links'
 import { personPath, useArchive, type Backlinks } from '../data'
 import { pick, t } from '../i18n'
 import { roleLabel } from '../roles'
@@ -220,6 +220,8 @@ export function PersonPage() {
           </div>
         </section>
       )}
+
+      <PdfSources sources={p.sources} lang={lang} />
 
       {mentions.length > 0 && (
         <section>

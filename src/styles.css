@@ -2453,6 +2453,36 @@ h2 .mined-mark,
   }
 }
 
+.pdf-sources {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  max-width: 80ch;
+}
+.pdf-sources li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding: 10px 14px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 14px;
+}
+.pdf-page {
+  font: 500 12px var(--font-mono);
+  color: var(--ink-2);
+}
+.pdf-note {
+  flex-basis: 100%;
+  font-size: 13px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
 /* ---------- Footer ---------- */
 
 .footer {

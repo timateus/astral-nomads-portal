@@ -7,6 +7,10 @@ and writes the enriched archive back:
   people[]    everyone credited or named in the archive (artists in catalogues, editors, curators…)
   materials[].refs, events[].refs, authors[].refs   → {entities: [{id, role, snippet?}], people: [...]}
   authors[].facts                                   → structured biography lines
+
+Curated `eventPeople` / `materialPeople` map an event or material id to {role: [person name or entity id]},
+for roles stated in the source itself (e.g. the colophon of a catalogue PDF). Curated entities and people
+may carry `sources`: [{material, page, note}] pointing at the page of a PDF where they are named.
 """
 import html, json, os, re, sys
 
@@ -16,7 +20,7 @@ CURATED = os.path.join(ROOT, "scripts", "enrichment.json")
 
 # Stronger roles win when one object links to the same entity in several ways
 ROLE_RANK = ["source", "organizer", "venue", "program", "curator", "commissioner", "artistic director", "participant",
-             "courtesy", "publisher", "creator", "artist", "editor", "credit", "place", "fact", "mention"]
+             "partner", "courtesy", "publisher", "creator", "artist", "editor", "text", "jury", "council", "coordinator", "manager", "consultant", "design", "photo", "credit", "place", "fact", "mention"]
 
 TRANSLIT = dict(zip("абвгдеёжзийклмнопрстуфхцчшщъыьэюяәғқңөұүһі",
                     ["a", "b", "v", "g", "d", "e", "e", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "f",
@@ -122,17 +126,30 @@ class People:
     def __init__(self, authors, curated):
         self.by_id = {}
         self.by_key = {}
+        self.by_name = {}  # squashed full name → id, checked before the looser surname+initial key
         self.patterns = []  # (regex, person id) for finding names in prose
         for a in authors:
             self._new(a["name"].get("en") or a["name"]["ru"], a["name"], author_id=a["id"], pid=a["id"])
+        claimed = set()
         for p in curated:
-            pid = self.find(p["ru"]) or self.find(p["en"]) or self._new(p["en"], {"ru": p["ru"], "en": p["en"]})
+            pid = self.by_name.get(squash(p["ru"])) or self.by_name.get(squash(p["en"]))
+            if not pid:
+                pid = self.find(p["ru"]) or self.find(p["en"])
+                # two curated names sharing surname and initial (Adis / Adil Seitaliev) stay two people
+                if pid in claimed:
+                    pid = None
+            pid = pid or self._new(p["en"], {"ru": p["ru"], "en": p["en"]})
+            claimed.add(pid)
+            for n in (p["ru"], p["en"]):
+                self.by_name.setdefault(squash(n), pid)
             person = self.by_id[pid]
             person["name"].setdefault("ru", p["ru"])
             person["name"].setdefault("en", p["en"])
             for k in (person_key(p["en"]), person_key(p["ru"])):
                 if k:
                     self.by_key.setdefault(k, pid)
+            if p.get("sources"):
+                person.setdefault("sources", []).extend(p["sources"])
             for a in p.get("aliases", []):
                 self.patterns.append((re.compile(a), pid))
         for a in authors:
@@ -146,12 +163,16 @@ class People:
             pid += "-2"
         self.by_id[pid] = {"id": pid, "name": {k: v for k, v in names.items() if v}, **({"authorId": author_id} if author_id else {})}
         for n in names.values():
+            if n:
+                self.by_name.setdefault(squash(n), pid)
             k = person_key(n or "")
             if k:
                 self.by_key.setdefault(k, pid)
         return pid
 
     def find(self, name):
+        if squash(name) in self.by_name:
+            return self.by_name[squash(name)]
         k = person_key(name)
         if k in self.by_key:
             return self.by_key[k]
@@ -209,6 +230,22 @@ def main():
 
     people = People(data["authors"], cur.get("people", []))
 
+    def add_curated(refs, table, override=False):
+        """Roles from eventPeople / materialPeople. With override, the strongest curated role replaces
+        one guessed from the site's credit lists (e.g. a jury member listed among a catalogue's names)."""
+        best = {}
+        for role, names in table.items():
+            for n in names:
+                key = ("entities", n) if n in entities else ("people", people.get(n, "ru"))
+                if key not in best or rank(role) < rank(best[key]):
+                    best[key] = role
+        for (kind, target), role in best.items():
+            cur = refs.items.get((kind, target))
+            if override and cur and cur["role"] != "source":
+                cur["role"] = role
+            else:
+                refs.add(kind, target, role)
+
     def scan(refs, text, role, skip_entity=None, want_snippet=False):
         if not text:
             return
@@ -232,6 +269,7 @@ def main():
                 refs.add("people", pid, role, snippet(text, m.start(), m.end()) if want_snippet else None)
 
     # ---- materials
+    mat_people = cur.get("materialPeople", {})
     for m in data["materials"]:
         refs = Refs()
         for iid in m.get("institutionIds", []):
@@ -273,6 +311,7 @@ def main():
                     refs.add("people", people.get(n, lang), "credit:" + role)
             # people named in short descriptions ("перформанс - Баходир Мусаев")
             scan_people(refs, (m.get("description") or {}).get(lang, ""), "mention")
+        add_curated(refs, mat_people.get(m["id"], {}), override=True)
         for aid in m["authorIds"]:
             refs.items.pop(("people", aid), None)
         m["refs"] = refs.out()
@@ -300,12 +339,7 @@ def main():
             txt = " ".join([e["title"].get(lang, ""), e["lead"].get(lang, ""), plain(e["description"].get(lang))])
             scan(refs, txt, "mention", want_snippet=lang == "ru")
             scan_people(refs, txt, "mention")
-        for role, names in ev_people.get(e["id"], {}).items():
-            for n in names:
-                if n in entities:
-                    refs.add("entities", n, role)
-                else:
-                    refs.add("people", people.get(n, "ru"), role)
+        add_curated(refs, ev_people.get(e["id"], {}))
         for aid in e.get("authorIds", []):
             refs.add("people", aid, "participant")
         e["refs"] = refs.out()

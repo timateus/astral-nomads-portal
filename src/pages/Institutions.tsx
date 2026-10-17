@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { MaterialCard } from '../components/Cards'
-import { EntityChip, MinedHidden, MinedMark, PersonChip, Snippets } from '../components/Links'
+import { EntityChip, MinedHidden, MinedMark, PdfSources, PersonChip, Snippets } from '../components/Links'
 import { isOriginalRef, useArchive, visibleRefs, type Backlinks } from '../data'
 import { exploreLink } from '../filters'
 import { pick, plural, t, itemsForms } from '../i18n'
@@ -255,6 +255,8 @@ export function InstitutionPage() {
           </div>
         </section>
       )}
+
+      {enriched && <PdfSources sources={e.sources} lang={lang} />}
 
       {mentions.length > 0 && (
         <section>
