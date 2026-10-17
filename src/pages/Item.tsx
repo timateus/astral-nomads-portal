@@ -3,9 +3,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Shelf } from '../components/Cards'
 import { Icon } from '../components/Icons'
 import { Lightbox } from '../components/Lightbox'
-import { RefChips } from '../components/Links'
+import { MinedMark, RefChips } from '../components/Links'
 import { Thumb } from '../components/Thumb'
-import { materialPath, useArchive } from '../data'
+import { isOriginalRef, materialPath, useArchive, visibleRefs } from '../data'
 import { exploreLink, related } from '../filters'
 import { pick, t, type StringKey } from '../i18n'
 import { getTrail } from '../trail'
@@ -22,7 +22,7 @@ function formatSize(bytes: number) {
 
 export function Item() {
   const { type, slug } = useParams()
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   const navigate = useNavigate()
   const m = archive.byId.get(`${type}:${slug}`)
   const [zoom, setZoom] = useState(false)
@@ -68,7 +68,7 @@ export function Item() {
     if (s) rows.push([t(k, lang), link ? <Link to={link}>{s}</Link> : s])
   }
   // people listed as chips below make the long name lists redundant
-  const listedPeople = (m.refs?.people ?? []).some((r) => r.role === 'artist')
+  const listedPeople = enriched && (m.refs?.people ?? []).some((r) => r.role === 'artist')
   if (pick(m.originalTitle, lang) !== title) add('originalTitle', m.originalTitle)
   if (!authors.length && !listedPeople) add('creators', m.creators)
   if (m.mediums.length) {
@@ -100,7 +100,9 @@ export function Item() {
   if (m.materialType && m.materialType !== 'other') add('libraryType', archive.terms.libraryType.get(m.materialType)?.label, exploreLink({ ltype: [m.materialType] }))
   add('courtesy', m.courtesy, m.courtesyKey ? exploreLink({ courtesy: [m.courtesyKey] }) : undefined)
   for (const [role, value] of m.credits?.[lang] ?? m.credits?.[lang === 'ru' ? 'en' : 'ru'] ?? []) rows.push([role, value])
-  const hasRefs = (m.refs?.entities?.length ?? 0) + (m.refs?.people?.length ?? 0) > 0
+  const shownRefs = { entities: visibleRefs(m.refs?.entities, enriched), people: visibleRefs(m.refs?.people, enriched) }
+  const hasRefs = shownRefs.entities.length + shownRefs.people.length > 0
+  const refsAllOriginal = [...shownRefs.entities, ...shownRefs.people].every((r) => isOriginalRef(r.role))
 
   return (
     <article className="item">
@@ -209,8 +211,11 @@ export function Item() {
           )}
           {hasRefs && (
             <div className="item-refs">
-              <h2 className="facet-title">{lang === 'ru' ? 'Люди и институции' : 'People & institutions'}</h2>
-              <RefChips refs={m.refs} lang={lang} />
+              <h2 className="facet-title">
+                {lang === 'ru' ? 'Люди и институции' : 'People & institutions'}
+                {!refsAllOriginal && <MinedMark lang={lang} />}
+              </h2>
+              <RefChips refs={shownRefs} lang={lang} />
             </div>
           )}
           <a className="text-link source-link" href={m.url} target="_blank" rel="noopener">

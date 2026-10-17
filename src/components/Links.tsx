@@ -1,8 +1,40 @@
 import { Link } from 'react-router-dom'
-import { personPath, useArchive } from '../data'
+import { personPath, useArchive, visibleRefs } from '../data'
 import { pick } from '../i18n'
 import { KIND_LABELS, roleLabel } from '../roles'
 import type { Entity, Lang, Person, Ref } from '../types'
+
+const MINED_TITLE: Record<Lang, string> = {
+  ru: 'Дополнено нами по текстам архива: на исходном сайте этих данных в таком виде нет',
+  en: 'Added by us from the archive’s own texts; the original site does not publish this as such',
+}
+
+/** Marks data we derived from the archive's texts rather than data the original site publishes. */
+export function MinedMark({ lang, iconOnly = false }: { lang: Lang; iconOnly?: boolean }) {
+  return (
+    <span className={`mined-mark${iconOnly ? ' mined-mark--icon' : ''}`} title={MINED_TITLE[lang]}>
+      <span aria-hidden="true">◇</span>
+      {iconOnly ? <span className="sr-only">{lang === 'ru' ? 'дополнено' : 'added'}</span> : lang === 'ru' ? ' дополнено' : ' added'}
+    </span>
+  )
+}
+
+/** Shown in place of mined content while the "added data" switch is off. */
+export function MinedHidden({ lang, what }: { lang: Lang; what?: string }) {
+  const { setEnriched } = useArchive()
+  return (
+    <div className="mined-hidden">
+      <MinedMark lang={lang} />
+      <p>
+        {what ?? (lang === 'ru' ? 'Этот раздел собран нами по текстам архива.' : 'This section was compiled by us from the archive’s texts.')}{' '}
+        {lang === 'ru' ? 'Сейчас показаны только данные исходного архива.' : 'Only the original archive’s data is shown right now.'}
+      </p>
+      <button type="button" className="btn" onClick={() => setEnriched(true)}>
+        {lang === 'ru' ? 'Показать дополнения' : 'Show added data'}
+      </button>
+    </div>
+  )
+}
 
 export function entityPath(e: Entity) {
   return `/institutions/${e.id}`
@@ -10,7 +42,7 @@ export function entityPath(e: Entity) {
 
 export function EntityChip({ e, role, lang }: { e: Entity; role?: string; lang: Lang }) {
   return (
-    <Link to={entityPath(e)} className={`chip-link chip-link--${e.kind}`}>
+    <Link to={entityPath(e)} className={`chip-link chip-link--${e.kind}${e.source ? '' : ' is-mined'}`} title={e.source ? undefined : MINED_TITLE[lang]}>
       {e.logo ? <img src={e.logo} alt="" /> : <span className="chip-link-dot" aria-hidden="true" />}
       <span>
         <strong>{pick(e.name, lang)}</strong>
@@ -24,7 +56,7 @@ export function PersonChip({ p, role, lang }: { p: Person; role?: string; lang: 
   const { archive } = useArchive()
   const author = p.authorId ? archive.authorById.get(p.authorId) : undefined
   return (
-    <Link to={personPath(p)} className={`chip-link chip-link--person${author ? ' is-author' : ''}`}>
+    <Link to={personPath(p)} className={`chip-link chip-link--person${author ? ' is-author' : ' is-mined'}`} title={author ? undefined : MINED_TITLE[lang]}>
       {author?.photo ? <img src={author.photo} alt="" /> : <span className="chip-link-initial" aria-hidden="true">{pick(p.name, lang).charAt(0)}</span>}
       <span>
         <strong>{pick(p.name, lang)}</strong>
@@ -36,9 +68,9 @@ export function PersonChip({ p, role, lang }: { p: Person; role?: string; lang: 
 
 /** Entities and people referenced by an object, grouped into one wrap of chips. */
 export function RefChips({ refs, lang, skipMentions = false }: { refs?: { entities?: Ref[]; people?: Ref[] }; lang: Lang; skipMentions?: boolean }) {
-  const { archive } = useArchive()
-  const ents = (refs?.entities ?? []).filter((r) => !skipMentions || r.role !== 'mention')
-  const ppl = (refs?.people ?? []).filter((r) => !skipMentions || r.role !== 'mention')
+  const { archive, enriched } = useArchive()
+  const ents = visibleRefs(refs?.entities, enriched).filter((r) => !skipMentions || r.role !== 'mention')
+  const ppl = visibleRefs(refs?.people, enriched).filter((r) => !skipMentions || r.role !== 'mention')
   if (!ents.length && !ppl.length) return null
   return (
     <div className="chip-links">

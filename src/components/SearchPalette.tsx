@@ -18,7 +18,7 @@ interface Hit {
 const norm = (s: string) => s.toLowerCase().replace(/ё/g, 'е')
 
 export function SearchPalette({ onClose }: { onClose: () => void }) {
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   const navigate = useNavigate()
   const [q, setQ] = useState('')
   const [active, setActive] = useState(0)
@@ -53,10 +53,11 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
       if (has(e.title.ru) || has(e.title.en)) out.push({ group: t('events', lang), label: pick(e.title, lang), sub: pick(e.dateText, lang), image: e.image, to: `/events/${e.slug}` })
     }
     for (const e of archive.entities) {
+      if (!enriched && !e.source) continue
       if (has(e.name.ru) || has(e.name.en)) out.push({ group: t('institutions', lang), label: pick(e.name, lang), sub: [pick(e.type, lang), pick(e.location, lang)].filter(Boolean).join(' · '), image: e.logo, to: `/institutions/${e.id}` })
     }
     for (const p of archive.people) {
-      if (!p.authorId && (has(p.name.ru) || has(p.name.en))) out.push({ group: lang === 'ru' ? 'Персоналии' : 'People', label: pick(p.name, lang), sub: pick(p.name, lang === 'ru' ? 'en' : 'ru'), to: `/people/${p.id}` })
+      if (enriched && !p.authorId && (has(p.name.ru) || has(p.name.en))) out.push({ group: lang === 'ru' ? 'Персоналии' : 'People', label: pick(p.name, lang), sub: pick(p.name, lang === 'ru' ? 'en' : 'ru'), to: `/people/${p.id}` })
     }
     const grouped = out.slice(0, 12)
     const ids = archive.search.search(q.trim()).slice(0, 8)
@@ -72,7 +73,7 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
       })
     }
     return grouped
-  }, [q, archive, lang])
+  }, [q, archive, lang, enriched])
 
   useEffect(() => setActive(0), [q])
 

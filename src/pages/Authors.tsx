@@ -8,9 +8,9 @@ import { pick, plural, t, worksForms } from '../i18n'
 import type { Material } from '../types'
 import { NotFound } from './NotFound'
 import { EventCard } from './Events'
-import { EntityChip, PersonChip, Snippets } from '../components/Links'
+import { EntityChip, MinedMark, PersonChip, Snippets } from '../components/Links'
 import { FACT_LABELS } from '../roles'
-import { personPath } from '../data'
+import { personPath, visibleRefs } from '../data'
 
 function worksOf(materials: Material[], id: string) {
   return materials.filter((m) => m.authorIds.includes(id))
@@ -67,7 +67,7 @@ export function Authors() {
 
 export function AuthorPage() {
   const { slug } = useParams()
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   const a = slug ? archive.authorById.get(slug) : undefined
   const works = useMemo(() => (a ? worksOf(archive.materials, a.id).sort((x, y) => (x.year ?? 0) - (y.year ?? 0)) : []), [archive, a])
   const [tab, setTab] = useState<string>('all')
@@ -85,11 +85,11 @@ export function AuthorPage() {
   for (const w of byType) if (w.year) counts.set(w.year, (counts.get(w.year) ?? 0) + 1)
   const ys = works.map((w) => w.year).filter((y): y is number => y != null)
   const backlinks = archive.personLinks.get(a.id)
-  const events = [...new Set([...archive.raw.events.filter((e) => e.authorIds.includes(a.id)), ...(backlinks?.events ?? []).map((x) => x.item)])]
-  const facts = a.facts ?? []
-  const refEntities = (a.refs?.entities ?? []).map((r) => ({ e: archive.entityById.get(r.id), role: r.role })).filter((x) => x.e)
-  const refPeople = (a.refs?.people ?? []).map((r) => ({ p: archive.personById.get(r.id), role: r.role })).filter((x) => x.p)
-  const elsewhere = [
+  const events = [...new Set([...archive.raw.events.filter((e) => e.authorIds.includes(a.id)), ...(enriched ? (backlinks?.events ?? []).map((x) => x.item) : [])])]
+  const facts = enriched ? (a.facts ?? []) : []
+  const refEntities = visibleRefs(a.refs?.entities, enriched).map((r) => ({ e: archive.entityById.get(r.id), role: r.role })).filter((x) => x.e)
+  const refPeople = visibleRefs(a.refs?.people, enriched).map((r) => ({ p: archive.personById.get(r.id), role: r.role })).filter((x) => x.p)
+  const elsewhere = !enriched ? [] : [
     ...(backlinks?.materials ?? []).map(({ item, ref }) => ({ to: `/item/${item.type}/${item.slug}`, title: pick(item.title, lang), snippet: ref.snippet, role: ref.role })),
     ...(backlinks?.authors ?? []).map(({ item, ref }) => ({ to: `/authors/${item.slug}`, title: pick(item.name, lang), snippet: ref.snippet, role: ref.role })),
     ...(backlinks?.entities ?? []).map(({ item, ref }) => ({ to: `/institutions/${item.id}`, title: pick(item.name, lang), snippet: undefined, role: ref.role })),
@@ -134,7 +134,10 @@ export function AuthorPage() {
             ))}
           </dl>
           {facts.length > 0 && (
-            <dl className="meta facts">
+            <dl className="meta facts is-mined-block">
+              <div className="mined-head">
+                <MinedMark lang={lang} />
+              </div>
               {facts.map((f, i) => {
                 const [kind, target] = f.ref?.split(':') ?? []
                 const to = kind === 'entity' ? `/institutions/${target}` : kind === 'person' && archive.personById.get(target) ? personPath(archive.personById.get(target)!) : undefined
@@ -213,7 +216,9 @@ export function AuthorPage() {
       {(refEntities.length > 0 || refPeople.length > 0) && (
         <section>
           <div className="section-head">
-            <h2>{lang === 'ru' ? 'Связи' : 'Connections'}</h2>
+            <h2>
+              {lang === 'ru' ? 'Связи' : 'Connections'} <MinedMark lang={lang} />
+            </h2>
           </div>
           <p className="muted section-note">
             {lang === 'ru' ? 'Институции, группы, проекты и люди из биографии и текстов об авторе.' : 'Institutions, groups, projects and people named in the biography and essays.'}
@@ -232,7 +237,9 @@ export function AuthorPage() {
       {elsewhere.length > 0 && (
         <section>
           <div className="section-head">
-            <h2>{lang === 'ru' ? 'Упоминается в архиве' : 'Elsewhere in the archive'}</h2>
+            <h2>
+              {lang === 'ru' ? 'Упоминается в архиве' : 'Elsewhere in the archive'} <MinedMark lang={lang} />
+            </h2>
           </div>
           <Snippets items={elsewhere} lang={lang} />
         </section>

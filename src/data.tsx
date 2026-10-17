@@ -115,7 +115,8 @@ function build(raw: RawArchive): Archive {
     }
 
     const entityKeys = (m.refs?.entities ?? []).map((r) => r.id)
-    return { ...m, materialType: m.type === 'library' ? m.materialType ?? 'other' : m.materialType, mediums, keywordKeys, placeKey, courtesyKey, entityKeys }
+    const sourceEntityKeys = (m.refs?.entities ?? []).filter((r) => r.role === 'source').map((r) => r.id)
+    return { ...m, materialType: m.type === 'library' ? m.materialType ?? 'other' : m.materialType, mediums, keywordKeys, placeKey, courtesyKey, entityKeys, sourceEntityKeys }
   })
 
   const entities = raw.entities ?? []
@@ -198,9 +199,20 @@ interface Ctx {
   error: string | null
   lang: Lang
   setLang: (l: Lang) => void
+  /** show data we derived from the archive's texts (not published as such by the original site) */
+  enriched: boolean
+  setEnriched: (v: boolean) => void
 }
 
-const ArchiveContext = createContext<Ctx>({ archive: null, error: null, lang: 'ru', setLang: () => {} })
+const ArchiveContext = createContext<Ctx>({ archive: null, error: null, lang: 'ru', setLang: () => {}, enriched: true, setEnriched: () => {} })
+
+function initialEnriched(): boolean {
+  try {
+    return localStorage.getItem('an-enriched') !== 'off'
+  } catch {
+    return true
+  }
+}
 
 function initialLang(): Lang {
   try {
@@ -216,6 +228,7 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
   const [archive, setArchive] = useState<Archive | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [lang, setLangState] = useState<Lang>(initialLang)
+  const [enriched, setEnrichedState] = useState<boolean>(initialEnriched)
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}data/archive.json`)
@@ -244,8 +257,17 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
           /* storage unavailable */
         }
       },
+      enriched,
+      setEnriched: (v) => {
+        setEnrichedState(v)
+        try {
+          localStorage.setItem('an-enriched', v ? 'on' : 'off')
+        } catch {
+          /* storage unavailable */
+        }
+      },
     }),
-    [archive, error, lang],
+    [archive, error, lang, enriched],
   )
   return <ArchiveContext.Provider value={value}>{children}</ArchiveContext.Provider>
 }
@@ -258,7 +280,20 @@ export function useArchiveCtx() {
 export function useArchive() {
   const ctx = useContext(ArchiveContext)
   if (!ctx.archive) throw new Error('archive not loaded')
-  return { archive: ctx.archive, lang: ctx.lang, setLang: ctx.setLang }
+  return { archive: ctx.archive, lang: ctx.lang, setLang: ctx.setLang, enriched: ctx.enriched, setEnriched: ctx.setEnriched }
+}
+
+/**
+ * Provenance. Original = published by the source archive: its materials, authors, events,
+ * its 3 institution pages and the links it shows between them (role "source").
+ * Everything else in `refs`, the curated entities, people and author facts is ours.
+ */
+export function isOriginalRef(role: string) {
+  return role === 'source'
+}
+
+export function visibleRefs<T extends { role: string }>(refs: T[] | undefined, enriched: boolean): T[] {
+  return (refs ?? []).filter((r) => enriched || isOriginalRef(r.role))
 }
 
 export function materialPath(m: { type: string; slug: string }) {

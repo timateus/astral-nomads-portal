@@ -58,7 +58,7 @@ export function activeCount(f: FilterState) {
   return FACET_KEYS.reduce((n, k) => n + f.facets[k].length, 0) + (f.from != null || f.to != null ? 1 : 0) + (f.q ? 1 : 0)
 }
 
-export function valuesOf(m: Material, key: FacetKey): string[] {
+export function valuesOf(m: Material, key: FacetKey, enriched = true): string[] {
   switch (key) {
     case 'type':
       return [m.type]
@@ -77,7 +77,7 @@ export function valuesOf(m: Material, key: FacetKey): string[] {
     case 'ltype':
       return m.materialType ? [m.materialType] : []
     case 'ent':
-      return m.entityKeys
+      return enriched ? m.entityKeys : m.sourceEntityKeys
     case 'has': {
       const out: string[] = []
       if (m.pdf) out.push('pdf')
@@ -88,9 +88,9 @@ export function valuesOf(m: Material, key: FacetKey): string[] {
   }
 }
 
-function matchesFacet(m: Material, key: FacetKey, selected: string[]) {
+function matchesFacet(m: Material, key: FacetKey, selected: string[], enriched: boolean) {
   if (!selected.length) return true
-  const vals = valuesOf(m, key)
+  const vals = valuesOf(m, key, enriched)
   // "has" is a set of requirements (AND); every other facet is OR within itself
   return key === 'has' ? selected.every((s) => vals.includes(s)) : selected.some((s) => vals.includes(s))
 }
@@ -128,7 +128,7 @@ function seeded(id: string) {
   return (h >>> 0) / 2 ** 32
 }
 
-export function runQuery(archive: Archive, f: FilterState): Result {
+export function runQuery(archive: Archive, f: FilterState, enriched = true): Result {
   const scores = searchIds(archive, f.q)
   const base = scores ? archive.materials.filter((m) => scores.has(m.id)) : archive.materials
 
@@ -137,13 +137,13 @@ export function runQuery(archive: Archive, f: FilterState): Result {
   const items: Material[] = []
 
   for (const m of base) {
-    const fails = FACET_KEYS.filter((k) => !matchesFacet(m, k, f.facets[k]))
+    const fails = FACET_KEYS.filter((k) => !matchesFacet(m, k, f.facets[k], enriched))
     const yearOk = matchesYear(m, f)
     if (fails.length === 0 && yearOk) items.push(m)
     // disjunctive counts: an item counts towards facet K if it passes every *other* filter
     for (const k of FACET_KEYS) {
       if (!yearOk || fails.some((x) => x !== k)) continue
-      for (const v of valuesOf(m, k)) counts[k].set(v, (counts[k].get(v) ?? 0) + 1)
+      for (const v of valuesOf(m, k, enriched)) counts[k].set(v, (counts[k].get(v) ?? 0) + 1)
     }
     if (fails.length === 0 && m.year != null) yearCounts.set(m.year, (yearCounts.get(m.year) ?? 0) + 1)
   }

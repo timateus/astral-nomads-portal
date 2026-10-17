@@ -3,7 +3,7 @@ import { useArchive } from '../data'
 import { pick, t } from '../i18n'
 import type { ArchiveEvent } from '../types'
 import { NotFound } from './NotFound'
-import { RefChips } from '../components/Links'
+import { MinedMark, RefChips } from '../components/Links'
 
 /** Status from the dates (the source labels go stale), falling back to the label. */
 export function eventStatus(e: ArchiveEvent, today = new Date().toISOString().slice(0, 10)): 'upcoming' | 'now' | 'past' {
@@ -56,10 +56,13 @@ export function Events() {
 
 export function EventPage() {
   const { slug } = useParams()
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   const e = archive.raw.events.find((x) => x.slug === slug)
   if (!e) return <NotFound />
   const status = eventStatus(e)
+  const authors = e.authorIds.map((id) => archive.authorById.get(id)).filter(Boolean)
+  // the original site lists authors; curators, other participants and venues come from our reading of the text
+  const minedRefs = { entities: e.refs?.entities ?? [], people: (e.refs?.people ?? []).filter((r) => !e.authorIds.includes(r.id)) }
   const others = archive.raw.events.filter((x) => x.id !== e.id)
   return (
     <div className="page event">
@@ -88,12 +91,32 @@ export function EventPage() {
         </div>
       </header>
       <div className="prose event-body" dangerouslySetInnerHTML={{ __html: pick(e.description, lang) }} />
-      {(e.refs?.people?.length ?? 0) + (e.refs?.entities?.length ?? 0) > 0 && (
+      {authors.length > 0 && (
         <section>
           <div className="section-head">
-            <h2>{lang === 'ru' ? 'Участники и институции' : 'People & institutions'}</h2>
+            <h2>{t('authors', lang)}</h2>
           </div>
-          <RefChips refs={e.refs} lang={lang} />
+          <div className="people people--wide">
+            {authors.map((p) => (
+              <Link key={p!.id} to={`/authors/${p!.slug}`} className="person">
+                {p!.photo ? <img src={p!.photo} alt="" /> : <span className="person-ph" />}
+                <span>
+                  <strong>{pick(p!.name, lang)}</strong>
+                  <small>{pick(p!.location, lang)}</small>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+      {enriched && minedRefs.entities.length + minedRefs.people.length > 0 && (
+        <section>
+          <div className="section-head">
+            <h2>
+              {lang === 'ru' ? 'Участники и институции' : 'People & institutions'} <MinedMark lang={lang} />
+            </h2>
+          </div>
+          <RefChips refs={minedRefs} lang={lang} />
         </section>
       )}
       <section>

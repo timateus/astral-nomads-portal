@@ -37,12 +37,21 @@ export interface Entity {
   phones?: string[]
   emails?: string[]
   refs?: Refs
+  sources?: Source[]
+}
+
+/** Where a curated entity or person is named in a material's PDF */
+export interface Source {
+  material: string
+  page: number | string
+  note?: string
 }
 
 export interface Person {
   id: string
   name: Bi
   authorId?: string
+  sources?: Source[]
 }
 
 export interface Fact {
@@ -162,6 +171,8 @@ export interface Material extends RawMaterial {
   mediums: string[]
   /** entities linked by something stronger than a passing mention */
   entityKeys: string[]
+  /** entities the original site itself links to this item */
+  sourceEntityKeys: string[]
   keywordKeys: string[]
   placeKey?: string
   courtesyKey?: string

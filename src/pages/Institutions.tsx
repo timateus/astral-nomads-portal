@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { MaterialCard } from '../components/Cards'
-import { EntityChip, PersonChip, Snippets } from '../components/Links'
-import { useArchive, type Backlinks } from '../data'
+import { EntityChip, MinedHidden, MinedMark, PersonChip, Snippets } from '../components/Links'
+import { isOriginalRef, useArchive, visibleRefs, type Backlinks } from '../data'
 import { exploreLink } from '../filters'
 import { pick, plural, t, itemsForms } from '../i18n'
 import { KIND_LABELS, KIND_ORDER, roleLabel } from '../roles'
@@ -15,12 +15,12 @@ function linkCount(b?: Backlinks) {
 }
 
 export function Institutions() {
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   const [kind, setKind] = useState<EntityKind | null>(null)
   const [country, setCountry] = useState<string | null>(null)
   const [q, setQ] = useState('')
 
-  const all = archive.entities
+  const all = enriched ? archive.entities : archive.entities.filter((e) => e.source)
   const needle = q.trim().toLowerCase()
   const list = all
     .filter((e) => !kind || e.kind === kind)
@@ -33,9 +33,13 @@ export function Institutions() {
     <div className="page">
       <h1 className="page-title">{lang === 'ru' ? 'Институции и сообщества' : 'Institutions & communities'}</h1>
       <p className="lead page-lead">
-        {lang === 'ru'
-          ? `Галереи, музеи, фонды, группы, проекты и площадки, которые упоминаются в материалах, биографиях и событиях архива — ${all.length}. Отмеченные знаком ✶ имеют страницу на сайте архива.`
-          : `Galleries, museums, foundations, groups, projects and venues named in the archive's materials, biographies and events — ${all.length} in total. Those marked ✶ have a page on the archive site.`}
+        {!enriched
+          ? lang === 'ru'
+            ? 'Институции, у которых есть страница на сайте исходного архива. Включите «Дополнения», чтобы увидеть ещё ' + (archive.entities.length - all.length) + ', найденных в текстах архива.'
+            : 'Institutions with a page on the original archive site. Turn on “Added data” to see ' + (archive.entities.length - all.length) + ' more found in the archive’s texts.'
+          : lang === 'ru'
+            ? `Галереи, музеи, фонды, группы, проекты и площадки, которые упоминаются в материалах, биографиях и событиях архива — ${all.length}. У ${archive.entities.filter((e) => e.source).length} из них есть страница на исходном сайте (✶); остальные (◇) мы собрали по текстам архива.`
+            : `Galleries, museums, foundations, groups, projects and venues named in the archive's materials, biographies and events — ${all.length} in total. ${archive.entities.filter((e) => e.source).length} have a page on the original site (✶); the rest (◇) we compiled from the archive’s texts.`}
       </p>
       <div className="entity-filters">
         <div className="chips">
@@ -81,26 +85,30 @@ export function Institutions() {
 }
 
 function EntityCard({ e }: { e: Entity }) {
-  const { archive, lang } = useArchive()
-  const b = archive.entityLinks.get(e.id)
+  const { archive, lang, enriched } = useArchive()
+  const all = archive.entityLinks.get(e.id)
+  const keep = <T extends { ref: { role: string } }>(xs: T[]) => xs.filter((x) => enriched || isOriginalRef(x.ref.role))
+  const b = all && { materials: keep(all.materials), authors: keep(all.authors), events: keep(all.events) }
   const parts = [
     b?.materials.length ? plural(b.materials.length, lang, itemsForms) : '',
     b?.authors.length ? `${b.authors.length} ${lang === 'ru' ? 'авт.' : b.authors.length === 1 ? 'author' : 'authors'}` : '',
     b?.events.length ? `${b.events.length} ${lang === 'ru' ? 'соб.' : b.events.length === 1 ? 'event' : 'events'}` : '',
   ].filter(Boolean)
   return (
-    <Link to={`/institutions/${e.id}`} className={`entity-card entity-card--${e.kind}`}>
+    <Link to={`/institutions/${e.id}`} className={`entity-card entity-card--${e.kind}${e.source ? '' : ' is-mined'}`}>
       <div className="entity-card-top">
         <span className="entity-kind">{KIND_LABELS[e.kind].one[lang]}</span>
-        {e.source && (
-          <span className="entity-source" title={lang === 'ru' ? 'Есть страница на сайте архива' : 'Has a page on the archive site'}>
-            ✶
+        {e.source ? (
+          <span className="entity-source" title={lang === 'ru' ? 'Есть страница на сайте исходного архива' : 'Has a page on the original archive site'}>
+            ✶ {lang === 'ru' ? 'архив' : 'archive'}
           </span>
+        ) : (
+          <MinedMark lang={lang} iconOnly />
         )}
       </div>
       {e.logo && <img src={e.logo} alt="" className="entity-card-logo" loading="lazy" />}
       <strong className="entity-card-name">{pick(e.name, lang)}</strong>
-      <span className="entity-card-type">{[pick(e.type, lang), pick(e.location, lang)].filter(Boolean).join(' · ')}</span>
+      <span className="entity-card-type">{[enriched ? pick(e.type, lang) : '', pick(e.location, lang)].filter(Boolean).join(' · ')}</span>
       {parts.length > 0 && <span className="entity-card-stats">{parts.join(' · ')}</span>}
     </Link>
   )
@@ -108,32 +116,42 @@ function EntityCard({ e }: { e: Entity }) {
 
 export function InstitutionPage() {
   const { slug } = useParams()
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   const e = slug ? archive.entityById.get(slug) : undefined
   const b = e ? archive.entityLinks.get(e.id) : undefined
 
   const groups = useMemo(() => {
     const byRole = new Map<string, Backlinks['materials']>()
-    for (const x of b?.materials ?? []) {
+    for (const x of (b?.materials ?? []).filter((x) => enriched || isOriginalRef(x.ref.role))) {
       const key = x.ref.role.startsWith('credit:') ? 'credit' : x.ref.role
       if (!byRole.has(key)) byRole.set(key, [])
       byRole.get(key)!.push(x)
     }
     return [...byRole]
-  }, [b])
+  }, [b, enriched])
 
   if (!e) return <NotFound />
+  if (!e.source && !enriched)
+    return (
+      <div className="page">
+        <nav className="crumbs" aria-label="Breadcrumbs">
+          <Link to="/institutions">{lang === 'ru' ? 'Институции и сообщества' : 'Institutions & communities'}</Link>
+        </nav>
+        <h1 className="page-title">{pick(e.name, lang)}</h1>
+        <MinedHidden lang={lang} what={lang === 'ru' ? 'Этой институции нет среди страниц исходного архива — карточку мы собрали по его текстам.' : 'This institution has no page on the original archive — we compiled this card from its texts.'} />
+      </div>
+    )
 
   const desc = pick(e.description, lang)
-  const mentions = [
+  const mentions = !enriched ? [] : [
     ...(b?.authors ?? []).map(({ item, ref }) => ({ to: `/authors/${item.slug}`, title: pick(item.name, lang), snippet: ref.snippet, role: ref.role })),
     ...(b?.events ?? []).filter(({ ref }) => ref.role === 'mention').map(({ item, ref }) => ({ to: `/events/${item.slug}`, title: pick(item.title, lang), snippet: ref.snippet, role: ref.role })),
   ]
-  const eventsLinked = (b?.events ?? []).filter(({ ref }) => ref.role !== 'mention')
-  const related = [...(e.refs?.entities ?? []).map((r) => ({ ent: archive.entityById.get(r.id), role: r.role })), ...(b?.entities ?? []).map((x) => ({ ent: x.item, role: x.ref.role }))].filter(
+  const eventsLinked = enriched ? (b?.events ?? []).filter(({ ref }) => ref.role !== 'mention') : []
+  const related = !enriched ? [] : [...(e.refs?.entities ?? []).map((r) => ({ ent: archive.entityById.get(r.id), role: r.role })), ...(b?.entities ?? []).map((x) => ({ ent: x.item, role: x.ref.role }))].filter(
     (x, i, arr) => x.ent && arr.findIndex((y) => y.ent?.id === x.ent!.id) === i,
   )
-  const people = (e.refs?.people ?? []).map((r) => archive.personById.get(r.id)).filter(Boolean)
+  const people = visibleRefs(e.refs?.people, enriched).map((r) => archive.personById.get(r.id)).filter(Boolean)
   const allMaterials = (b?.materials ?? []).map((x) => x.item)
 
   return (
@@ -145,8 +163,9 @@ export function InstitutionPage() {
         {e.logo ? <img className="author-photo author-photo--logo" src={e.logo} alt={pick(e.name, lang)} /> : <div className={`entity-mark entity-mark--${e.kind}`} aria-hidden="true">✶</div>}
         <div>
           <p className="kicker">
+            {e.source ? <span className="entity-source">✶ {lang === 'ru' ? 'страница архива' : 'archive page'} · </span> : <><MinedMark lang={lang} /> · </>}
             {KIND_LABELS[e.kind].one[lang]}
-            {pick(e.type, lang) ? ` · ${pick(e.type, lang)}` : ''}
+            {enriched && pick(e.type, lang) ? ` · ${pick(e.type, lang)}` : ''}
             {pick(e.location, lang) ? ` · ${pick(e.location, lang)}` : ''}
             {e.year ? ` · ${e.year}` : ''}
           </p>
@@ -201,8 +220,9 @@ export function InstitutionPage() {
         <section key={role}>
           <div className="section-head">
             <h2>
-              {role === 'credit' ? (lang === 'ru' ? 'В выходных данных' : 'In the credits') : role === 'mention' ? (lang === 'ru' ? 'Упоминается в материалах' : 'Mentioned in items') : roleLabel(role, lang)}
+              {role === 'source' ? t('archive', lang) : role === 'credit' ? (lang === 'ru' ? 'В выходных данных' : 'In the credits') : role === 'mention' ? (lang === 'ru' ? 'Упоминается в материалах' : 'Mentioned in items') : roleLabel(role, lang)}
               <span className="count"> {items.length}</span>
+              {!isOriginalRef(role) && <MinedMark lang={lang} />}
             </h2>
             {items.length > 8 && (
               <Link className="text-link" to={exploreLink({ ent: [e.id] })}>
@@ -221,7 +241,9 @@ export function InstitutionPage() {
       {eventsLinked.length > 0 && (
         <section>
           <div className="section-head">
-            <h2>{t('events', lang)}</h2>
+            <h2>
+              {t('events', lang)} <MinedMark lang={lang} />
+            </h2>
           </div>
           <div className="event-grid">
             {eventsLinked.map(({ item, ref }) => (
@@ -237,7 +259,9 @@ export function InstitutionPage() {
       {mentions.length > 0 && (
         <section>
           <div className="section-head">
-            <h2>{lang === 'ru' ? 'В текстах архива' : 'In the archive’s texts'}</h2>
+            <h2>
+              {lang === 'ru' ? 'В текстах архива' : 'In the archive’s texts'} <MinedMark lang={lang} />
+            </h2>
           </div>
           <Snippets items={mentions} lang={lang} />
         </section>
@@ -246,7 +270,9 @@ export function InstitutionPage() {
       {(people.length > 0 || related.length > 0) && (
         <section>
           <div className="section-head">
-            <h2>{lang === 'ru' ? 'Связи' : 'Connections'}</h2>
+            <h2>
+              {lang === 'ru' ? 'Связи' : 'Connections'} <MinedMark lang={lang} />
+            </h2>
           </div>
           <div className="chip-links">
             {people.map((p) => (

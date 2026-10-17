@@ -12,10 +12,10 @@ import type { Material, Term } from '../types'
 const PAGE = 48
 
 export function Explore() {
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   const [sp, setSp] = useSearchParams()
   const f = useMemo(() => parseFilters(sp), [sp])
-  const result = useMemo(() => runQuery(archive, f), [archive, f])
+  const result = useMemo(() => runQuery(archive, f, enriched), [archive, f, enriched])
   const totals = useMemo(() => runQuery(archive, { ...parseFilters(new URLSearchParams()) }).yearCounts, [archive])
   const [qDraft, setQDraft] = useState(f.q)
   const [drawer, setDrawer] = useState(false)
@@ -77,7 +77,14 @@ export function Explore() {
       <FacetGroup title={t('country', lang)} lang={lang} selected={f.facets.country} onToggle={(v) => toggle('country', v)} options={opts('country', archive.terms.country.values())} />
       <FacetGroup title={t('place', lang)} lang={lang} limit={5} selected={f.facets.place} onToggle={(v) => toggle('place', v)} options={opts('place', archive.terms.place.values())} />
       <FacetGroup title={t('libraryType', lang)} lang={lang} selected={f.facets.ltype} onToggle={(v) => toggle('ltype', v)} options={opts('ltype', archive.terms.libraryType.values())} />
-      <FacetGroup title={lang === 'ru' ? 'Институции и проекты' : 'Institutions & projects'} lang={lang} limit={6} selected={f.facets.ent} onToggle={(v) => toggle('ent', v)} options={opts('ent', archive.terms.entity.values())} />
+      <FacetGroup
+        title={enriched ? (lang === 'ru' ? 'Институции и проекты ◇' : 'Institutions & projects ◇') : lang === 'ru' ? 'Институция' : 'Institution'}
+        lang={lang}
+        limit={6}
+        selected={f.facets.ent}
+        onToggle={(v) => toggle('ent', v)}
+        options={opts('ent', [...archive.terms.entity.values()].filter((term) => enriched || archive.entityById.get(term.key)?.source))}
+      />
       <FacetGroup title={t('courtesy', lang)} lang={lang} limit={5} selected={f.facets.courtesy} onToggle={(v) => toggle('courtesy', v)} options={opts('courtesy', archive.terms.courtesy.values())} />
       <FacetGroup
         title={t('format', lang)}

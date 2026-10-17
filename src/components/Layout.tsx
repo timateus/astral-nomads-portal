@@ -6,7 +6,7 @@ import { Icon } from './Icons'
 import { SearchPalette } from './SearchPalette'
 
 export function Layout() {
-  const { archive, lang, setLang } = useArchive()
+  const { archive, lang, setLang, enriched, setEnriched } = useArchive()
   const [palette, setPalette] = useState(false)
   const { pathname } = useLocation()
 
@@ -57,6 +57,26 @@ export function Layout() {
             <span>{t('searchShort', lang)}</span>
             <kbd>⌘K</kbd>
           </button>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={enriched}
+            className={`enriched-switch${enriched ? ' is-on' : ''}`}
+            onClick={() => setEnriched(!enriched)}
+            title={
+              lang === 'ru'
+                ? 'Показывать данные, которые мы собрали по текстам архива (◇): институции, персоналии, связи, факты. Выключите, чтобы видеть только исходный архив.'
+                : 'Show data we compiled from the archive’s texts (◇): institutions, people, links, facts. Turn off to see only the original archive.'
+            }
+          >
+            <span className="enriched-switch-track" aria-hidden="true">
+              <span className="enriched-switch-thumb" />
+            </span>
+            <span className="enriched-switch-label">
+              <span aria-hidden="true">◇ </span>
+              {lang === 'ru' ? 'Дополнения' : 'Added data'}
+            </span>
+          </button>
           <div className="lang-switch" role="group" aria-label="Language">
             {(['ru', 'en'] as const).map((l) => (
               <button key={l} type="button" aria-pressed={lang === l} onClick={() => setLang(l)}>
@@ -86,6 +106,12 @@ export function Layout() {
           <a href={archive.raw.source} target="_blank" rel="noopener">
             {archive.raw.source.replace('https://', '')}
           </a>
+        </p>
+        <p className="footer-note">
+          <span className="mined-mark">◇</span>{' '}
+          {lang === 'ru'
+            ? '— дополнения: институции, персоналии, связи и факты, которые мы собрали по текстам самого архива (метаданным, биографиям, описаниям событий). Их можно скрыть переключателем «Дополнения» в шапке.'
+            : '— added data: institutions, people, links and facts we compiled from the archive’s own texts (metadata, biographies, event descriptions). Hide them with the “Added data” switch in the header.'}
         </p>
       </footer>
       {palette && <SearchPalette onClose={() => setPalette(false)} />}

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { MaterialCard } from '../components/Cards'
-import { EntityChip, Snippets } from '../components/Links'
+import { EntityChip, MinedHidden, MinedMark, Snippets } from '../components/Links'
 import { personPath, useArchive, type Backlinks } from '../data'
 import { pick, t } from '../i18n'
 import { roleLabel } from '../roles'
@@ -44,7 +44,7 @@ function surname(name: string) {
 }
 
 export function People() {
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   const [group, setGroup] = useState<RoleGroup | null>(null)
   const [q, setQ] = useState('')
 
@@ -59,6 +59,7 @@ export function People() {
   )
   const needle = q.trim().toLowerCase()
   const list = rows
+    .filter((r) => enriched || r.p.authorId)
     .filter((r) => !group || r.groups.includes(group))
     .filter((r) => !needle || `${r.p.name.ru ?? ''} ${r.p.name.en ?? ''}`.toLowerCase().includes(needle))
     .sort((a, b) => surname(pick(a.p.name, lang)).localeCompare(surname(pick(b.p.name, lang)), lang))
@@ -76,10 +77,16 @@ export function People() {
       <h1 className="page-title">{lang === 'ru' ? 'Персоналии' : 'People'}</h1>
       <p className="lead page-lead">
         {lang === 'ru'
-          ? `Все, кто назван в архиве: авторы, художники в каталогах, кураторы, редакторы, участники событий и герои биографических текстов — ${archive.people.length}.`
-          : `Everyone named in the archive: authors, artists in catalogues, curators, editors, event participants and people in the biographical essays — ${archive.people.length}.`}
+          ? `Все, кто назван в архиве: авторы, художники в каталогах, кураторы, редакторы, участники событий и герои биографических текстов — ${archive.people.length}. Страницы на исходном сайте есть только у авторов (✶); остальное (◇) мы собрали по текстам архива.`
+          : `Everyone named in the archive: authors, artists in catalogues, curators, editors, event participants and people in the biographical essays — ${archive.people.length}. Only authors have pages on the original site (✶); the rest (◇) we compiled from the archive’s texts.`}
       </p>
-      <div className="entity-filters">
+      {!enriched && (
+        <MinedHidden
+          lang={lang}
+          what={lang === 'ru' ? 'Указатель персоналий собран нами по выходным данным, описаниям событий и биографиям; в исходном архиве есть только страницы авторов — они показаны ниже.' : 'The people index was compiled by us from credits, event descriptions and biographies; the original archive only has author pages, shown below.'}
+        />
+      )}
+      <div className="entity-filters" hidden={!enriched}>
         <div className="chips">
           <button type="button" className={`chip${!group ? ' is-on' : ''}`} onClick={() => setGroup(null)}>
             {lang === 'ru' ? 'Все' : 'All'} · {rows.length}
@@ -109,7 +116,7 @@ export function People() {
                     <Link to={personPath(p)} className={p.authorId ? 'is-author' : ''}>
                       <span className="people-name">
                         {pick(p.name, lang)}
-                        {p.authorId && <span className="entity-source" title={GROUP_LABELS.author[lang]}> ✶</span>}
+                        {p.authorId ? <span className="entity-source" title={GROUP_LABELS.author[lang]}> ✶</span> : <> <MinedMark lang={lang} iconOnly /></>}
                       </span>
                       {other && other !== pick(p.name, lang) && <span className="people-alt">{other}</span>}
                       <span className="people-roles">
@@ -130,10 +137,20 @@ export function People() {
 
 export function PersonPage() {
   const { id } = useParams()
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   const p = id ? archive.personById.get(id) : undefined
   if (!p) return <NotFound />
   if (p.authorId) return <Navigate to={`/authors/${p.authorId}`} replace />
+  if (!enriched)
+    return (
+      <div className="page">
+        <nav className="crumbs" aria-label="Breadcrumbs">
+          <Link to="/people">{lang === 'ru' ? 'Персоналии' : 'People'}</Link>
+        </nav>
+        <h1 className="page-title">{pick(p.name, lang)}</h1>
+        <MinedHidden lang={lang} what={lang === 'ru' ? 'У этого человека нет страницы в исходном архиве — её мы собрали по упоминаниям в текстах.' : 'This person has no page in the original archive — we compiled it from mentions in the texts.'} />
+      </div>
+    )
   const b = archive.personLinks.get(p.id)
   const materials = b?.materials ?? []
   const events = b?.events ?? []
@@ -158,7 +175,10 @@ export function PersonPage() {
           {pick(p.name, lang).charAt(0)}
         </div>
         <div>
-          {roles.length > 0 && <p className="kicker">{roles.join(' · ')}</p>}
+          <p className="kicker">
+            <MinedMark lang={lang} />
+            {roles.length > 0 ? ` · ${roles.join(' · ')}` : ''}
+          </p>
           <h1 className="page-title">{pick(p.name, lang)}</h1>
           {other && other !== pick(p.name, lang) && <p className="lead">{other}</p>}
           <p className="provenance">
