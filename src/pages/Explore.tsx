@@ -72,6 +72,16 @@ export function Explore() {
         onToggle={(v) => toggle('author', v)}
         options={archive.authors.map((a) => ({ key: a.id, label: pick(a.name, lang), count: result.counts.author.get(a.id) ?? 0, image: a.photo }))}
       />
+      {enriched && (
+        <FacetGroup
+          title={lang === 'ru' ? 'Персоналии ◇' : 'People ◇'}
+          lang={lang}
+          limit={6}
+          selected={f.facets.person}
+          onToggle={(v) => toggle('person', v)}
+          options={opts('person', archive.terms.person.values())}
+        />
+      )}
       <FacetGroup title={t('medium', lang)} lang={lang} selected={f.facets.medium} onToggle={(v) => toggle('medium', v)} options={opts('medium', archive.terms.medium.values())} />
       <FacetGroup title={t('keywords', lang)} lang={lang} variant="chips" limit={14} selected={f.facets.kw} onToggle={(v) => toggle('kw', v)} options={opts('kw', archive.terms.keyword.values())} />
       <FacetGroup title={t('country', lang)} lang={lang} selected={f.facets.country} onToggle={(v) => toggle('country', v)} options={opts('country', archive.terms.country.values())} />
@@ -96,12 +106,13 @@ export function Explore() {
           { key: 'image', label: t('hasImage', lang), count: result.counts.has.get('image') ?? 0 },
           { key: 'pdf', label: t('hasPdf', lang), count: result.counts.has.get('pdf') ?? 0 },
           { key: 'video', label: t('hasVideo', lang), count: result.counts.has.get('video') ?? 0 },
+          ...(enriched ? [{ key: 'mined', label: lang === 'ru' ? 'С найденными связями ◇' : 'With found links ◇', count: result.counts.has.get('mined') ?? 0 }] : []),
         ]}
       />
     </div>
   )
 
-  const chips = activeChips(f, archive.terms, archive.authors, lang)
+  const chips = activeChips(f, archive.terms, archive.authors, lang).filter((c) => enriched || !(c.id.startsWith('person:') || c.id === 'has:mined'))
   const n = activeCount(f)
   const trail = result.items.map((m) => m.id)
   const items = result.items.slice(0, limit)
@@ -273,9 +284,12 @@ function activeChips(f: FilterState, terms: ReturnType<typeof useArchive>['archi
         return pick(terms.courtesy.get(v)?.label, lang) || v
       case 'ltype':
         return pick(terms.libraryType.get(v)?.label, lang) || v
+      case 'person':
+        return pick(terms.person.get(v)?.label, lang) || v
       case 'ent':
         return pick(terms.entity.get(v)?.label, lang) || v
       case 'has':
+        if (v === 'mined') return lang === 'ru' ? 'С найденными связями ◇' : 'With found links ◇'
         return t(v === 'pdf' ? 'hasPdf' : v === 'video' ? 'hasVideo' : 'hasImage', lang)
     }
   }

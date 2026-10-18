@@ -47,6 +47,7 @@ export interface Archive {
     country: Map<string, Term>
     libraryType: Map<string, Term>
     entity: Map<string, Term>
+    person: Map<string, Term>
   }
   yearMin: number
   yearMax: number
@@ -116,7 +117,10 @@ function build(raw: RawArchive): Archive {
 
     const entityKeys = (m.refs?.entities ?? []).map((r) => r.id)
     const sourceEntityKeys = (m.refs?.entities ?? []).filter((r) => r.role === 'source').map((r) => r.id)
-    return { ...m, materialType: m.type === 'library' ? m.materialType ?? 'other' : m.materialType, mediums, keywordKeys, placeKey, courtesyKey, entityKeys, sourceEntityKeys }
+    const personKeys = (m.refs?.people ?? []).map((r) => r.id)
+    // courtesy / place links only restate the item's own fields, so they don't count as found links
+    const minedLinks = (m.refs?.entities ?? []).filter((r) => !['source', 'courtesy', 'place'].includes(r.role)).length + personKeys.length
+    return { ...m, materialType: m.type === 'library' ? m.materialType ?? 'other' : m.materialType, mediums, keywordKeys, placeKey, courtesyKey, entityKeys, sourceEntityKeys, personKeys, minedLinks }
   })
 
   const entities = raw.entities ?? []
@@ -141,6 +145,7 @@ function build(raw: RawArchive): Archive {
   collect(raw.events, 'events')
   collect(entities, 'entities')
   const entity = new Map<string, Term>(entities.map((e) => [e.id, { key: e.id, label: e.name }]))
+  const person = new Map<string, Term>(people.filter((p) => !p.authorId).map((p) => [p.id, { key: p.id, label: p.name }]))
 
   const years = materials.map((m) => m.year).filter((y): y is number => y != null)
 
@@ -180,7 +185,7 @@ function build(raw: RawArchive): Archive {
     byId: new Map(materials.map((m) => [m.id, m])),
     authors: raw.authors,
     authorById,
-    terms: { medium, keyword, place, courtesy, country, libraryType, entity },
+    terms: { medium, keyword, place, courtesy, country, libraryType, entity, person },
     entities,
     entityById,
     people,

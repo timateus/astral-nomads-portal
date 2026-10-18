@@ -11,7 +11,7 @@ function creatorLine(m: Material, names: (id: string) => string, lang: 'ru' | 'e
 }
 
 export function MaterialCard({ m, trail, eager }: { m: Material; trail?: string[]; eager?: boolean }) {
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   const names = (id: string) => pick(archive.authorById.get(id)?.name, lang)
   const country = m.country ? pick(archive.terms.country.get(m.country)?.label, lang) : ''
   return (
@@ -21,6 +21,7 @@ export function MaterialCard({ m, trail, eager }: { m: Material; trail?: string[
         <span className="card-kicker">
           {t(`${m.type}One`, lang)}
           {m.year ? <> · {m.year}</> : null}
+          {enriched && m.minedLinks > 0 && <MinedCount n={m.minedLinks} lang={lang} />}
         </span>
         <span className="card-title">{pick(m.title, lang) || t('untitled', lang)}</span>
         <span className="card-meta">{[creatorLine(m, names, lang), country].filter(Boolean).join(' · ')}</span>
@@ -30,7 +31,7 @@ export function MaterialCard({ m, trail, eager }: { m: Material; trail?: string[
 }
 
 export function MaterialRow({ m, trail }: { m: Material; trail?: string[] }) {
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   const names = (id: string) => pick(archive.authorById.get(id)?.name, lang)
   return (
     <Link to={materialPath(m)} className="row" onClick={() => trail && setTrail(trail)}>
@@ -41,8 +42,21 @@ export function MaterialRow({ m, trail }: { m: Material; trail?: string[] }) {
       </span>
       <span className="row-author">{creatorLine(m, names, lang)}</span>
       <span className="row-type">{t(`${m.type}One`, lang)}</span>
-      <span className="row-year">{m.year ?? '—'}</span>
+      <span className="row-year">
+        {m.year ?? '—'}
+        {enriched && m.minedLinks > 0 && <MinedCount n={m.minedLinks} lang={lang} />}
+      </span>
     </Link>
+  )
+}
+
+/** "◇ 12": how many people and institutions we linked to this item from its texts and PDFs. */
+function MinedCount({ n, lang }: { n: number; lang: 'ru' | 'en' }) {
+  const label = lang === 'ru' ? `Найденные связи: ${n} (люди и институции из текстов и PDF)` : `Found links: ${n} (people and institutions from texts and PDFs)`
+  return (
+    <span className="card-mined" title={label} aria-label={label}>
+      ◇ {n}
+    </span>
   )
 }
 

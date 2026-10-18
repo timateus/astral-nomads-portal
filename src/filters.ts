@@ -1,8 +1,8 @@
 import type { Archive } from './data'
 import type { Material } from './types'
 
-export type FacetKey = 'type' | 'author' | 'country' | 'medium' | 'kw' | 'place' | 'courtesy' | 'ltype' | 'ent' | 'has'
-export const FACET_KEYS: FacetKey[] = ['type', 'author', 'country', 'medium', 'kw', 'place', 'courtesy', 'ltype', 'ent', 'has']
+export type FacetKey = 'type' | 'author' | 'country' | 'medium' | 'kw' | 'place' | 'courtesy' | 'ltype' | 'ent' | 'person' | 'has'
+export const FACET_KEYS: FacetKey[] = ['type', 'author', 'country', 'medium', 'kw', 'place', 'courtesy', 'ltype', 'ent', 'person', 'has']
 export type SortKey = 'relevance' | 'year-asc' | 'year-desc' | 'title' | 'random'
 export type ViewKey = 'grid' | 'list' | 'timeline'
 
@@ -78,17 +78,25 @@ export function valuesOf(m: Material, key: FacetKey, enriched = true): string[] 
       return m.materialType ? [m.materialType] : []
     case 'ent':
       return enriched ? m.entityKeys : m.sourceEntityKeys
+    case 'person':
+      return enriched ? m.personKeys : []
     case 'has': {
       const out: string[] = []
       if (m.pdf) out.push('pdf')
       if (m.video) out.push('video')
       if (m.image) out.push('image')
+      if (enriched && m.minedLinks > 0) out.push('mined')
       return out
     }
   }
 }
 
 function matchesFacet(m: Material, key: FacetKey, selected: string[], enriched: boolean) {
+  // filters on added data are ignored while the "added data" switch is off
+  if (!enriched) {
+    if (key === 'person') return true
+    if (key === 'has') selected = selected.filter((v) => v !== 'mined')
+  }
   if (!selected.length) return true
   const vals = valuesOf(m, key, enriched)
   // "has" is a set of requirements (AND); every other facet is OR within itself

@@ -173,6 +173,10 @@ export interface Material extends RawMaterial {
   entityKeys: string[]
   /** entities the original site itself links to this item */
   sourceEntityKeys: string[]
+  /** people (other than the item's own authors) linked from our reading of the texts and PDFs */
+  personKeys: string[]
+  /** links we found for this item: people, and entities beyond its own source/courtesy/place fields */
+  minedLinks: number
   keywordKeys: string[]
   placeKey?: string
   courtesyKey?: string
