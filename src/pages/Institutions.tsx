@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { MaterialCard } from '../components/Cards'
-import { EntityChip, MinedHidden, MinedMark, PdfSources, PersonChip, Snippets } from '../components/Links'
+import { EntityChip, MinedMark, PdfSources, PersonChip, Snippets } from '../components/Links'
 import { isOriginalRef, useArchive, visibleRefs, type Backlinks } from '../data'
 import { exploreLink } from '../filters'
 import { pick, plural, t, itemsForms } from '../i18n'
@@ -32,12 +32,12 @@ export function Institutions() {
 
   return (
     <div className="page">
-      <h1 className="page-title">{lang === 'ru' ? 'Институции и сообщества' : 'Institutions & communities'}</h1>
+      <h1 className="page-title">{enriched ? (lang === 'ru' ? 'Институции и сообщества' : 'Institutions & communities') : t('institutions', lang)}</h1>
       <p className="lead page-lead">
         {!enriched
           ? lang === 'ru'
-            ? 'Институции, у которых есть страница на сайте исходного архива. Включите «Дополнения», чтобы увидеть ещё ' + (archive.entities.length - all.length) + ', найденных в текстах архива.'
-            : 'Institutions with a page on the original archive site. Turn on “Added data” to see ' + (archive.entities.length - all.length) + ' more found in the archive’s texts.'
+            ? 'Институции, представленные в архиве.'
+            : 'Institutions represented in the archive.'
           : lang === 'ru'
             ? `Галереи, музеи, фонды, группы, площадки и учебные заведения, которые упоминаются в материалах, биографиях и событиях архива — ${all.length}. Выставки и проекты — в разделе «События». У ${archive.entities.filter((e) => e.source).length} из них есть страница на исходном сайте (✶); остальные (◇) мы собрали по текстам архива.`
             : `Galleries, museums, foundations, groups, venues and schools named in the archive's materials, biographies and events — ${all.length} in total. Exhibitions and projects are under Events. ${archive.entities.filter((e) => e.source).length} have a page on the original site (✶); the rest (◇) we compiled from the archive’s texts.`}
@@ -99,7 +99,7 @@ function EntityCard({ e }: { e: Entity }) {
     <Link to={`/institutions/${e.id}`} className={`entity-card entity-card--${e.kind}${e.source ? '' : ' is-mined'}`}>
       <div className="entity-card-top">
         <span className="entity-kind">{KIND_LABELS[e.kind].one[lang]}</span>
-        {e.source ? (
+        {!enriched ? null : e.source ? (
           <span className="entity-source" title={lang === 'ru' ? 'Есть страница на сайте исходного архива' : 'Has a page on the original archive site'}>
             ✶ {lang === 'ru' ? 'архив' : 'archive'}
           </span>
@@ -134,17 +134,8 @@ export function InstitutionPage() {
 
   if (!e) return <NotFound />
   if (e.kind === 'program' && !pathname.startsWith('/events/')) return <Navigate to={`/events/${e.id}`} replace />
-  const crumb = e.kind === 'program' ? { to: '/events', label: t('events', lang) } : { to: '/institutions', label: lang === 'ru' ? 'Институции и сообщества' : 'Institutions & communities' }
-  if (!e.source && !enriched)
-    return (
-      <div className="page">
-        <nav className="crumbs" aria-label="Breadcrumbs">
-          <Link to={crumb.to}>{crumb.label}</Link>
-        </nav>
-        <h1 className="page-title">{pick(e.name, lang)}</h1>
-        <MinedHidden lang={lang} what={lang === 'ru' ? 'Этой институции нет среди страниц исходного архива — карточку мы собрали по его текстам.' : 'This institution has no page on the original archive — we compiled this card from its texts.'} />
-      </div>
-    )
+  const crumb = e.kind === 'program' ? { to: '/events', label: t('events', lang) } : { to: '/institutions', label: enriched ? (lang === 'ru' ? 'Институции и сообщества' : 'Institutions & communities') : t('institutions', lang) }
+  if (!e.source && !enriched) return <NotFound />
 
   const desc = pick(e.description, lang)
   const mentions = !enriched ? [] : [
@@ -167,7 +158,7 @@ export function InstitutionPage() {
         {e.logo ? <img className="author-photo author-photo--logo" src={e.logo} alt={pick(e.name, lang)} /> : <div className={`entity-mark entity-mark--${e.kind}`} aria-hidden="true">✶</div>}
         <div>
           <p className="kicker">
-            {e.source ? <span className="entity-source">✶ {lang === 'ru' ? 'страница архива' : 'archive page'} · </span> : <><MinedMark lang={lang} /> · </>}
+            {!enriched ? null : e.source ? <span className="entity-source">✶ {lang === 'ru' ? 'страница архива' : 'archive page'} · </span> : <><MinedMark lang={lang} /> · </>}
             {KIND_LABELS[e.kind].one[lang]}
             {enriched && pick(e.type, lang) ? ` · ${pick(e.type, lang)}` : ''}
             {pick(e.location, lang) ? ` · ${pick(e.location, lang)}` : ''}

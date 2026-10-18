@@ -3,7 +3,7 @@ import { useArchive } from '../data'
 import { itemsForms, pick, plural, t } from '../i18n'
 import type { ArchiveEvent, Entity } from '../types'
 import { NotFound } from './NotFound'
-import { MinedHidden, MinedMark, RefChips } from '../components/Links'
+import { MinedMark, RefChips } from '../components/Links'
 import { InstitutionPage } from './Institutions'
 
 /** Status from the dates (the source labels go stale), falling back to the label. */
@@ -82,22 +82,14 @@ export function Events() {
           <h2>
             {lang === 'ru' ? 'Хроника' : 'Chronicle'} {span && <span className="count">{span}</span>}
           </h2>
-          <span className="muted chronicle-legend">
-            <span className="entity-source">✶</span> {lang === 'ru' ? 'страница архива' : 'archive page'}
-            {enriched && (
-              <>
-                {'  '}
-                <MinedMark lang={lang} iconOnly /> {lang === 'ru' ? 'найдено в текстах и PDF' : 'found in texts and PDFs'}
-              </>
-            )}
-          </span>
+          {enriched && (
+            <span className="muted chronicle-legend">
+              <span className="entity-source">✶</span> {lang === 'ru' ? 'страница архива' : 'archive page'}
+              {'  '}
+              <MinedMark lang={lang} iconOnly /> {lang === 'ru' ? 'найдено в текстах и PDF' : 'found in texts and PDFs'}
+            </span>
+          )}
         </div>
-        {!enriched && (
-          <MinedHidden
-            lang={lang}
-            what={lang === 'ru' ? `В хронике ещё ${archive.entities.filter((x) => x.kind === 'program').length} выставок и проектов, найденных нами в текстах и PDF-каталогах архива.` : `The chronicle has ${archive.entities.filter((x) => x.kind === 'program').length} more exhibitions and projects we found in the archive’s texts and PDF catalogues.`}
-          />
-        )}
         {[...decades].map(([decade, rs]) => (
           <div key={decade} className="chronicle-decade">
             <h3 className="chronicle-decade-title">
@@ -132,7 +124,7 @@ export function Events() {
 }
 
 function ChronicleItem({ r }: { r: ChronicleRow }) {
-  const { archive, lang } = useArchive()
+  const { archive, lang, enriched } = useArchive()
   if (r.kind === 'event') {
     const e = r.e
     return (
@@ -143,7 +135,7 @@ function ChronicleItem({ r }: { r: ChronicleRow }) {
             <strong>{pick(e.title, lang)}</strong>
             <small>{[pick(e.dateText, lang), pick(e.location, lang)].filter(Boolean).join(' · ')}</small>
           </span>
-          <span className="entity-source">✶</span>
+          {enriched && <span className="entity-source">✶</span>}
         </Link>
       </li>
     )
@@ -171,7 +163,7 @@ export function EventPage() {
   const { archive, lang, enriched } = useArchive()
   const e = archive.raw.events.find((x) => x.slug === slug)
   // exhibitions and projects found in the archive's texts live under /events too
-  if (!e && slug && archive.entityById.get(slug)?.kind === 'program') return <InstitutionPage />
+  if (!e && enriched && slug && archive.entityById.get(slug)?.kind === 'program') return <InstitutionPage />
   if (!e) return <NotFound />
   const status = eventStatus(e)
   const authors = e.authorIds.map((id) => archive.authorById.get(id)).filter(Boolean)

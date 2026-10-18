@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { MaterialCard } from '../components/Cards'
-import { EntityChip, entityPath, MinedHidden, MinedMark, PdfSources, Snippets } from '../components/Links'
+import { EntityChip, entityPath, MinedMark, PdfSources, Snippets } from '../components/Links'
 import { personPath, useArchive, type Backlinks } from '../data'
 import { pick, t } from '../i18n'
 import { roleLabel } from '../roles'
@@ -44,6 +44,12 @@ function surname(name: string) {
 }
 
 export function People() {
+  const { enriched } = useArchive()
+  if (!enriched) return <Navigate to="/authors" replace />
+  return <PeopleIndex />
+}
+
+function PeopleIndex() {
   const { archive, lang, enriched } = useArchive()
   const [group, setGroup] = useState<RoleGroup | null>(null)
   const [q, setQ] = useState('')
@@ -80,12 +86,6 @@ export function People() {
           ? `Все, кто назван в архиве: авторы, художники в каталогах, кураторы, редакторы, участники событий и герои биографических текстов — ${archive.people.length}. Страницы на исходном сайте есть только у авторов (✶); остальное (◇) мы собрали по текстам архива.`
           : `Everyone named in the archive: authors, artists in catalogues, curators, editors, event participants and people in the biographical essays — ${archive.people.length}. Only authors have pages on the original site (✶); the rest (◇) we compiled from the archive’s texts.`}
       </p>
-      {!enriched && (
-        <MinedHidden
-          lang={lang}
-          what={lang === 'ru' ? 'Указатель персоналий собран нами по выходным данным, описаниям событий и биографиям; в исходном архиве есть только страницы авторов — они показаны ниже.' : 'The people index was compiled by us from credits, event descriptions and biographies; the original archive only has author pages, shown below.'}
-        />
-      )}
       <div className="entity-filters" hidden={!enriched}>
         <div className="chips">
           <button type="button" className={`chip${!group ? ' is-on' : ''}`} onClick={() => setGroup(null)}>
@@ -141,16 +141,7 @@ export function PersonPage() {
   const p = id ? archive.personById.get(id) : undefined
   if (!p) return <NotFound />
   if (p.authorId) return <Navigate to={`/authors/${p.authorId}`} replace />
-  if (!enriched)
-    return (
-      <div className="page">
-        <nav className="crumbs" aria-label="Breadcrumbs">
-          <Link to="/people">{lang === 'ru' ? 'Персоналии' : 'People'}</Link>
-        </nav>
-        <h1 className="page-title">{pick(p.name, lang)}</h1>
-        <MinedHidden lang={lang} what={lang === 'ru' ? 'У этого человека нет страницы в исходном архиве — её мы собрали по упоминаниям в текстах.' : 'This person has no page in the original archive — we compiled it from mentions in the texts.'} />
-      </div>
-    )
+  if (!enriched) return <NotFound />
   const b = archive.personLinks.get(p.id)
   const materials = b?.materials ?? []
   const events = b?.events ?? []

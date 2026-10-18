@@ -32,7 +32,7 @@ export function Layout() {
     ['/people', lang === 'ru' ? 'Персоналии' : 'People'],
     ['/institutions', t('institutions', lang)],
     ['/events', t('events', lang)],
-  ] as const
+  ].filter(([to]) => enriched || to !== '/people') as [string, string][]
 
   return (
     <div className="app">
@@ -107,12 +107,14 @@ export function Layout() {
             {archive.raw.source.replace('https://', '')}
           </a>
         </p>
+        {enriched && (
         <p className="footer-note">
           <span className="mined-mark">◇</span>{' '}
           {lang === 'ru'
             ? '— дополнения: институции, персоналии, связи и факты, которые мы собрали по текстам самого архива (метаданным, биографиям, описаниям событий). Их можно скрыть переключателем «Дополнения» в шапке.'
             : '— added data: institutions, people, links and facts we compiled from the archive’s own texts (metadata, biographies, event descriptions). Hide them with the “Added data” switch in the header.'}
         </p>
+        )}
       </footer>
       {palette && <SearchPalette onClose={() => setPalette(false)} />}
     </div>
