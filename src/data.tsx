@@ -209,13 +209,14 @@ interface Ctx {
   setEnriched: (v: boolean) => void
 }
 
-const ArchiveContext = createContext<Ctx>({ archive: null, error: null, lang: 'ru', setLang: () => {}, enriched: true, setEnriched: () => {} })
+const ArchiveContext = createContext<Ctx>({ archive: null, error: null, lang: 'ru', setLang: () => {}, enriched: false, setEnriched: () => {} })
 
+/** Added data is opt-in: off unless this visitor turned it on. */
 function initialEnriched(): boolean {
   try {
-    return localStorage.getItem('an-enriched') !== 'off'
+    return localStorage.getItem('an-enriched') === 'on'
   } catch {
-    return true
+    return false
   }
 }
 

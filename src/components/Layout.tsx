@@ -4,10 +4,12 @@ import { useArchive } from '../data'
 import { t } from '../i18n'
 import { Icon } from './Icons'
 import { SearchPalette } from './SearchPalette'
+import { EnrichedInfo } from './EnrichedInfo'
 
 export function Layout() {
   const { archive, lang, setLang, enriched, setEnriched } = useArchive()
   const [palette, setPalette] = useState(false)
+  const [info, setInfo] = useState(false)
   const { pathname } = useLocation()
 
   useEffect(() => {
@@ -57,12 +59,16 @@ export function Layout() {
             <span>{t('searchShort', lang)}</span>
             <kbd>⌘K</kbd>
           </button>
+          <span className="enriched-wrap">
           <button
             type="button"
             role="switch"
             aria-checked={enriched}
             className={`enriched-switch${enriched ? ' is-on' : ''}`}
-            onClick={() => setEnriched(!enriched)}
+            onClick={() => {
+              setEnriched(!enriched)
+              setInfo(!enriched)
+            }}
             title={
               lang === 'ru'
                 ? 'Показывать данные, которые мы собрали по текстам архива (◇): институции, персоналии, связи, факты. Выключите, чтобы видеть только исходный архив.'
@@ -77,6 +83,8 @@ export function Layout() {
               {lang === 'ru' ? 'Дополнения' : 'Added data'}
             </span>
           </button>
+          {info && enriched && <EnrichedInfo onClose={() => setInfo(false)} />}
+          </span>
           <div className="lang-switch" role="group" aria-label="Language">
             {(['ru', 'en'] as const).map((l) => (
               <button key={l} type="button" aria-pressed={lang === l} onClick={() => setLang(l)}>
