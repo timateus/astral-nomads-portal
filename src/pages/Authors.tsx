@@ -8,7 +8,7 @@ import { pick, plural, t, worksForms } from '../i18n'
 import type { Material } from '../types'
 import { NotFound } from './NotFound'
 import { EventCard } from './Events'
-import { EntityChip, MinedMark, PersonChip, Snippets } from '../components/Links'
+import { EntityChip, entityPath, MinedMark, PersonChip, Snippets } from '../components/Links'
 import { FACT_LABELS } from '../roles'
 import { personPath, visibleRefs } from '../data'
 
@@ -92,7 +92,7 @@ export function AuthorPage() {
   const elsewhere = !enriched ? [] : [
     ...(backlinks?.materials ?? []).map(({ item, ref }) => ({ to: `/item/${item.type}/${item.slug}`, title: pick(item.title, lang), snippet: ref.snippet, role: ref.role })),
     ...(backlinks?.authors ?? []).map(({ item, ref }) => ({ to: `/authors/${item.slug}`, title: pick(item.name, lang), snippet: ref.snippet, role: ref.role })),
-    ...(backlinks?.entities ?? []).map(({ item, ref }) => ({ to: `/institutions/${item.id}`, title: pick(item.name, lang), snippet: undefined, role: ref.role })),
+    ...(backlinks?.entities ?? []).map(({ item, ref }) => ({ to: entityPath(item), title: pick(item.name, lang), snippet: undefined, role: ref.role })),
   ]
   const themes = new Map<string, number>()
   for (const w of works) for (const k of w.keywordKeys) themes.set(k, (themes.get(k) ?? 0) + 1)
@@ -140,7 +140,7 @@ export function AuthorPage() {
               </div>
               {facts.map((f, i) => {
                 const [kind, target] = f.ref?.split(':') ?? []
-                const to = kind === 'entity' ? `/institutions/${target}` : kind === 'person' && archive.personById.get(target) ? personPath(archive.personById.get(target)!) : undefined
+                const to = kind === 'entity' && archive.entityById.get(target) ? entityPath(archive.entityById.get(target)!) : kind === 'person' && archive.personById.get(target) ? personPath(archive.personById.get(target)!) : undefined
                 return (
                   <div key={i}>
                     <dt>{FACT_LABELS[f.k]?.[lang] ?? f.k}</dt>

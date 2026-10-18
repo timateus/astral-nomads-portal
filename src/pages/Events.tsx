@@ -1,9 +1,10 @@
 import { Link, useParams } from 'react-router-dom'
 import { useArchive } from '../data'
-import { pick, t } from '../i18n'
-import type { ArchiveEvent } from '../types'
+import { itemsForms, pick, plural, t } from '../i18n'
+import type { ArchiveEvent, Entity } from '../types'
 import { NotFound } from './NotFound'
-import { MinedMark, RefChips } from '../components/Links'
+import { MinedHidden, MinedMark, RefChips } from '../components/Links'
+import { InstitutionPage } from './Institutions'
 
 /** Status from the dates (the source labels go stale), falling back to the label. */
 export function eventStatus(e: ArchiveEvent, today = new Date().toISOString().slice(0, 10)): 'upcoming' | 'now' | 'past' {
@@ -30,27 +31,138 @@ export function EventCard({ e }: { e: ArchiveEvent }) {
   )
 }
 
+type ChronicleRow =
+  | { kind: 'event'; year: number | null; e: ArchiveEvent }
+  | { kind: 'program'; year: number | null; p: Entity }
+
+function eventYear(e: ArchiveEvent) {
+  return e.start ? Number(e.start.slice(0, 4)) : null
+}
+
 export function Events() {
-  const { archive, lang } = useArchive()
-  const order = { now: 0, upcoming: 1, past: 2 }
-  const events = [...archive.raw.events].sort((a, b) => order[eventStatus(a)] - order[eventStatus(b)] || (eventStatus(a) === 'past' ? (b.start ?? '').localeCompare(a.start ?? '') : (a.start ?? '').localeCompare(b.start ?? '')))
-  const groups = (['now', 'upcoming', 'past'] as const).map((s) => [s, events.filter((e) => eventStatus(e) === s)] as const).filter(([, es]) => es.length)
+  const { archive, lang, enriched } = useArchive()
+  const current = archive.raw.events
+    .filter((e) => eventStatus(e) !== 'past')
+    .sort((a, b) => (eventStatus(a) === 'now' ? -1 : 0) - (eventStatus(b) === 'now' ? -1 : 0) || (a.start ?? '').localeCompare(b.start ?? ''))
+
+  // past events from the archive + exhibitions and projects we found in its texts and PDFs
+  const rows: ChronicleRow[] = [
+    ...archive.raw.events.filter((e) => eventStatus(e) === 'past').map((e) => ({ kind: 'event' as const, year: eventYear(e), e })),
+    ...(enriched ? archive.entities.filter((x) => x.kind === 'program').map((p) => ({ kind: 'program' as const, year: p.year ?? null, p })) : []),
+  ]
+  const title = (r: ChronicleRow) => (r.kind === 'event' ? pick(r.e.title, lang) : pick(r.p.name, lang))
+  const dated = rows.filter((r) => r.year != null).sort((a, b) => a.year! - b.year! || title(a).localeCompare(title(b), lang))
+  const undated = rows.filter((r) => r.year == null).sort((a, b) => title(a).localeCompare(title(b), lang))
+  const decades = new Map<number, ChronicleRow[]>()
+  for (const r of dated) {
+    const d = Math.floor(r.year! / 10) * 10
+    if (!decades.has(d)) decades.set(d, [])
+    decades.get(d)!.push(r)
+  }
+  const span = dated.length ? `${dated[0].year}–${dated[dated.length - 1].year}` : ''
+
   return (
     <div className="page">
       <h1 className="page-title">{t('events', lang)}</h1>
-      {groups.map(([s, es]) => (
-        <section key={s}>
+      {current.length > 0 && (
+        <section>
           <div className="section-head">
-            <h2>{t(s, lang)}</h2>
+            <h2>{lang === 'ru' ? 'Сейчас и скоро' : 'Now & upcoming'}</h2>
           </div>
           <div className="event-grid">
-            {es.map((e) => (
+            {current.map((e) => (
               <EventCard key={e.id} e={e} />
             ))}
           </div>
         </section>
-      ))}
+      )}
+
+      <section>
+        <div className="section-head">
+          <h2>
+            {lang === 'ru' ? 'Хроника' : 'Chronicle'} {span && <span className="count">{span}</span>}
+          </h2>
+          <span className="muted chronicle-legend">
+            <span className="entity-source">✶</span> {lang === 'ru' ? 'страница архива' : 'archive page'}
+            {enriched && (
+              <>
+                {'  '}
+                <MinedMark lang={lang} iconOnly /> {lang === 'ru' ? 'найдено в текстах и PDF' : 'found in texts and PDFs'}
+              </>
+            )}
+          </span>
+        </div>
+        {!enriched && (
+          <MinedHidden
+            lang={lang}
+            what={lang === 'ru' ? `В хронике ещё ${archive.entities.filter((x) => x.kind === 'program').length} выставок и проектов, найденных нами в текстах и PDF-каталогах архива.` : `The chronicle has ${archive.entities.filter((x) => x.kind === 'program').length} more exhibitions and projects we found in the archive’s texts and PDF catalogues.`}
+          />
+        )}
+        {[...decades].map(([decade, rs]) => (
+          <div key={decade} className="chronicle-decade">
+            <h3 className="chronicle-decade-title">
+              {decade}
+              {t('decade', lang)}
+            </h3>
+            <ul className="chronicle">
+              {rs.map((r) => (
+                <ChronicleItem key={r.kind === 'event' ? r.e.id : r.p.id} r={r} />
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+
+      {undated.length > 0 && (
+        <section>
+          <div className="section-head">
+            <h2>
+              {lang === 'ru' ? 'Регулярные и без точной даты' : 'Recurring & undated'} <MinedMark lang={lang} />
+            </h2>
+          </div>
+          <ul className="chronicle chronicle--undated">
+            {undated.map((r) => (
+              <ChronicleItem key={r.kind === 'event' ? r.e.id : r.p.id} r={r} />
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
+  )
+}
+
+function ChronicleItem({ r }: { r: ChronicleRow }) {
+  const { archive, lang } = useArchive()
+  if (r.kind === 'event') {
+    const e = r.e
+    return (
+      <li>
+        <Link to={`/events/${e.slug}`} className="chronicle-row">
+          <span className="chronicle-year">{r.year ?? '—'}</span>
+          <span className="chronicle-main">
+            <strong>{pick(e.title, lang)}</strong>
+            <small>{[pick(e.dateText, lang), pick(e.location, lang)].filter(Boolean).join(' · ')}</small>
+          </span>
+          <span className="entity-source">✶</span>
+        </Link>
+      </li>
+    )
+  }
+  const p = r.p
+  const b = archive.entityLinks.get(p.id)
+  const n = b ? b.materials.length : 0
+  const place = pick(p.location, lang) || (p.country ? pick(archive.terms.country.get(p.country)?.label, lang) : '')
+  return (
+    <li>
+      <Link to={`/events/${p.id}`} className="chronicle-row is-mined">
+        <span className="chronicle-year">{r.year ?? ''}</span>
+        <span className="chronicle-main">
+          <strong>{pick(p.name, lang)}</strong>
+          <small>{[pick(p.type, lang), place, n ? plural(n, lang, itemsForms) : ''].filter(Boolean).join(' · ')}</small>
+        </span>
+        <MinedMark lang={lang} iconOnly />
+      </Link>
+    </li>
   )
 }
 
@@ -58,6 +170,8 @@ export function EventPage() {
   const { slug } = useParams()
   const { archive, lang, enriched } = useArchive()
   const e = archive.raw.events.find((x) => x.slug === slug)
+  // exhibitions and projects found in the archive's texts live under /events too
+  if (!e && slug && archive.entityById.get(slug)?.kind === 'program') return <InstitutionPage />
   if (!e) return <NotFound />
   const status = eventStatus(e)
   const authors = e.authorIds.map((id) => archive.authorById.get(id)).filter(Boolean)

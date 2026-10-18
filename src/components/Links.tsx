@@ -37,7 +37,7 @@ export function MinedHidden({ lang, what }: { lang: Lang; what?: string }) {
 }
 
 export function entityPath(e: Entity) {
-  return `/institutions/${e.id}`
+  return e.kind === 'program' ? `/events/${e.id}` : `/institutions/${e.id}`
 }
 
 export function EntityChip({ e, role, lang }: { e: Entity; role?: string; lang: Lang }) {

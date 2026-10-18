@@ -5,6 +5,7 @@ import { materialPath, useArchive } from '../data'
 import { exploreLink } from '../filters'
 import { pick, t } from '../i18n'
 import { Icon } from './Icons'
+import { entityPath } from './Links'
 import { setTrail } from '../trail'
 
 interface Hit {
@@ -54,7 +55,7 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
     }
     for (const e of archive.entities) {
       if (!enriched && !e.source) continue
-      if (has(e.name.ru) || has(e.name.en)) out.push({ group: t('institutions', lang), label: pick(e.name, lang), sub: [pick(e.type, lang), pick(e.location, lang)].filter(Boolean).join(' · '), image: e.logo, to: `/institutions/${e.id}` })
+      if (has(e.name.ru) || has(e.name.en)) out.push({ group: e.kind === 'program' ? t('events', lang) : t('institutions', lang), label: pick(e.name, lang), sub: [pick(e.type, lang), pick(e.location, lang), e.year].filter(Boolean).join(' · '), image: e.logo, to: entityPath(e) })
     }
     for (const p of archive.people) {
       if (enriched && !p.authorId && (has(p.name.ru) || has(p.name.en))) out.push({ group: lang === 'ru' ? 'Персоналии' : 'People', label: pick(p.name, lang), sub: pick(p.name, lang === 'ru' ? 'en' : 'ru'), to: `/people/${p.id}` })

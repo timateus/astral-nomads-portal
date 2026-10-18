@@ -93,7 +93,7 @@ const strings = {
   contacts: { ru: 'Контакты', en: 'Contacts' },
   address: { ru: 'Адрес', en: 'Address' },
   items: { ru: 'материалов', en: 'items' },
-  decade: { ru: 'е', en: 's' },
+  decade: { ru: '-е', en: 's' },
   quickJump: { ru: 'Быстрый переход', en: 'Quick jump' },
   typeToSearch: { ru: 'Начните вводить…', en: 'Start typing…' },
   pressEnter: { ru: 'Enter — все результаты в обзоре', en: 'Enter — see all results in Explore' },

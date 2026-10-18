@@ -2483,6 +2483,85 @@ h2 .mined-mark,
   overflow-wrap: anywhere;
 }
 
+.chronicle-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  white-space: pre;
+}
+.chronicle-decade {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.chronicle-decade-title {
+  font-size: 22px;
+  color: var(--ochre);
+  position: sticky;
+  top: 76px;
+  align-self: start;
+}
+.chronicle {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.chronicle-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: baseline;
+  padding: 9px 10px;
+  margin: 0 -10px;
+  border-radius: var(--radius-sm);
+}
+.chronicle-row:hover {
+  background: var(--surface);
+}
+.chronicle-row:hover strong {
+  color: var(--accent);
+}
+.chronicle-year {
+  font: 500 14px var(--font-mono);
+  color: var(--ink-2);
+}
+.chronicle-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.chronicle-main strong {
+  font-weight: 600;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+.chronicle-main small {
+  font-size: 13px;
+  color: var(--muted);
+}
+.chronicle--undated .chronicle-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.chronicle--undated .chronicle-year {
+  display: none;
+}
+@media (max-width: 640px) {
+  .chronicle-decade {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .chronicle-decade-title {
+    position: static;
+  }
+  .chronicle-row {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+}
+
 /* ---------- Footer ---------- */
 
 .footer {

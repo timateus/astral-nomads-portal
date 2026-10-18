@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { MaterialCard } from '../components/Cards'
-import { EntityChip, MinedHidden, MinedMark, PdfSources, Snippets } from '../components/Links'
+import { EntityChip, entityPath, MinedHidden, MinedMark, PdfSources, Snippets } from '../components/Links'
 import { personPath, useArchive, type Backlinks } from '../data'
 import { pick, t } from '../i18n'
 import { roleLabel } from '../roles'
@@ -156,7 +156,7 @@ export function PersonPage() {
   const events = b?.events ?? []
   const mentions = [
     ...(b?.authors ?? []).map(({ item, ref }) => ({ to: `/authors/${item.slug}`, title: pick(item.name, lang), snippet: ref.snippet, role: ref.role })),
-    ...(b?.entities ?? []).map(({ item, ref }) => ({ to: `/institutions/${item.id}`, title: pick(item.name, lang), snippet: undefined, role: ref.role })),
+    ...(b?.entities ?? []).map(({ item, ref }) => ({ to: entityPath(item), title: pick(item.name, lang), snippet: undefined, role: ref.role })),
   ]
   // entities this person is connected to through the items they appear in
   const viaEntities = new Map<string, number>()
