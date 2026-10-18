@@ -133,7 +133,7 @@ export function PdfSources({ sources, lang }: { sources?: Source[]; lang: Lang }
                   PDF ↓
                 </a>
               )}
-              {s.note && <span className="pdf-note">{s.note}</span>}
+              {s.note && <span className="pdf-note">{typeof s.note === 'string' ? s.note : pick(s.note, lang)}</span>}
             </li>
           )
         })}

@@ -44,7 +44,7 @@ export interface Entity {
 export interface Source {
   material: string
   page: number | string
-  note?: string
+  note?: Bi | string
 }
 
 export interface Person {
