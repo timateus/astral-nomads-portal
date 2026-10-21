@@ -557,9 +557,10 @@ section {
   position: absolute;
   left: 17px;
   top: 13px;
-  border-left: 12px solid var(--paper);
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
+  width: 12px;
+  height: 16px;
+  background: var(--paper);
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
 }
 
 .card {
