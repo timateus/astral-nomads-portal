@@ -110,6 +110,10 @@ export function Layout() {
           <p>{t('tagline', lang)}</p>
         </div>
         <p className="footer-note">
+          <strong>{lang === 'ru' ? 'Это предыдущая версия интерфейса.' : 'This is the previous version of the interface.'}</strong>{' '}
+          <a href="../">{lang === 'ru' ? 'Перейти к текущей версии →' : 'Go to the current version →'}</a>
+        </p>
+        <p className="footer-note">
           {t('dataNote', lang)} {new Date(archive.generatedAt).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.{' '}
           <a href={archive.raw.source} target="_blank" rel="noopener">
             {archive.raw.source.replace('https://', '')}
