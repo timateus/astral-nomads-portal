@@ -29,6 +29,16 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
       # SPA fallback: Pages serves 404.html for deep links like /item/artifact/...
       - run: cp dist/index.html dist/404.html
+      # the previous interface lives on the v1-modern branch and is served from /v1/
+      - uses: actions/checkout@v4
+        with:
+          ref: v1-modern
+          path: v1src
+      - run: npm ci && npm run build
+        working-directory: v1src
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/v1/
+      - run: cp -r v1src/dist dist/v1
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

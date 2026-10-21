@@ -11,6 +11,7 @@ import { pick, t, type StringKey } from '../i18n'
 import { getTrail } from '../trail'
 import type { Bi } from '../types'
 import { NotFound } from './NotFound'
+import { PageHead } from '../components/PageHead'
 
 function youtubeId(url: string) {
   return url.match(/(?:embed\/|v=|youtu\.be\/)([\w-]{11})/)?.[1]
@@ -63,6 +64,8 @@ export function Item() {
   const section = m.type
 
   const rows: [string, ReactNode][] = []
+  // archival record, as on the original: the title opens the list of fields
+  rows.push([lang === 'ru' ? 'Название' : 'Title', title])
   const add = (k: StringKey, v: Bi | string | undefined, link?: string) => {
     const s = typeof v === 'string' ? v : pick(v, lang)
     if (s) rows.push([t(k, lang), link ? <Link to={link}>{s}</Link> : s])
@@ -100,16 +103,14 @@ export function Item() {
   if (m.materialType && m.materialType !== 'other') add('libraryType', archive.terms.libraryType.get(m.materialType)?.label, exploreLink({ ltype: [m.materialType] }))
   add('courtesy', m.courtesy, m.courtesyKey ? exploreLink({ courtesy: [m.courtesyKey] }) : undefined)
   for (const [role, value] of m.credits?.[lang] ?? m.credits?.[lang === 'ru' ? 'en' : 'ru'] ?? []) rows.push([role, value])
+  if (pick(m.description, lang)) rows.push([lang === 'ru' ? 'Описание' : 'Description', <span className="item-desc">{pick(m.description, lang)}</span>])
   const shownRefs = { entities: visibleRefs(m.refs?.entities, enriched), people: visibleRefs(m.refs?.people, enriched) }
   const hasRefs = shownRefs.entities.length + shownRefs.people.length > 0
   const refsAllOriginal = [...shownRefs.entities, ...shownRefs.people].every((r) => isOriginalRef(r.role))
 
   return (
     <article className="item">
-      <nav className="crumbs" aria-label="Breadcrumbs">
-        <Link to="/explore">{t('explore', lang)}</Link>
-        <span aria-hidden="true">/</span>
-        <Link to={exploreLink({ type: [section] })}>{t(section, lang)}</Link>
+      <PageHead title={title} crumbs={[{ to: '/explore', label: t('explore', lang) }, { to: exploreLink({ type: [section] }), label: t(section, lang) }]}>
         {pos >= 0 && (
           <span className="crumbs-pager">
             <button type="button" className="icon-btn" disabled={!prev} onClick={() => prev && navigate(materialPath(prev), { replace: true })} aria-label={t('prev', lang)} title="←">
@@ -123,7 +124,7 @@ export function Item() {
             </button>
           </span>
         )}
-      </nav>
+      </PageHead>
 
       <div className="item-grid">
         <div className="item-media">
@@ -175,7 +176,6 @@ export function Item() {
               </>
             ) : null}
           </p>
-          <h1 className="item-title">{title}</h1>
           {authors.length > 0 && (
             <div className="people">
               {authors.map((p) => {
@@ -191,7 +191,6 @@ export function Item() {
               })}
             </div>
           )}
-          {pick(m.description, lang) && <p className="item-desc">{pick(m.description, lang)}</p>}
           <dl className="meta">
             {rows.map(([k, v], i) => (
               <div key={`${k}-${i}`}>

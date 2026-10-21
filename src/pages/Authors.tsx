@@ -7,6 +7,7 @@ import { exploreLink } from '../filters'
 import { pick, plural, t, worksForms } from '../i18n'
 import type { Material } from '../types'
 import { NotFound } from './NotFound'
+import { PageHead } from '../components/PageHead'
 import { EventCard } from './Events'
 import { EntityChip, entityPath, MinedMark, PersonChip, Snippets } from '../components/Links'
 import { FACT_LABELS } from '../roles'
@@ -35,7 +36,7 @@ export function Authors() {
 
   return (
     <div className="page">
-      <h1 className="page-title">{t('authors', lang)}</h1>
+      <PageHead title={t('authors', lang)} />
       <div className="chips chips--filter">
         <button type="button" className={`chip${!country ? ' is-on' : ''}`} onClick={() => setCountry(null)}>
           {lang === 'ru' ? 'Все' : 'All'} · {archive.authors.length}
@@ -101,14 +102,11 @@ export function AuthorPage() {
 
   return (
     <div className="page author">
-      <nav className="crumbs" aria-label="Breadcrumbs">
-        <Link to="/authors">{t('authors', lang)}</Link>
-      </nav>
+      <PageHead title={pick(a.name, lang)} crumbs={[{ to: '/authors', label: t('authors', lang) }]} />
       <header className="author-hero">
         {a.photo && <img className="author-photo" src={a.photo} alt={pick(a.name, lang)} />}
         <div>
           <p className="kicker">{pick(a.location, lang)}</p>
-          <h1 className="page-title">{pick(a.name, lang)}</h1>
           {bio && <div className="prose" dangerouslySetInnerHTML={{ __html: bio }} />}
           {about && (
             <button type="button" className="btn" onClick={() => setAboutOpen(true)}>

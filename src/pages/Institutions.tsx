@@ -9,6 +9,7 @@ import { KIND_LABELS, KIND_ORDER, roleLabel } from '../roles'
 import type { Entity, EntityKind } from '../types'
 import { EventCard } from './Events'
 import { NotFound } from './NotFound'
+import { PageHead } from '../components/PageHead'
 
 function linkCount(b?: Backlinks) {
   return b ? b.materials.length + b.authors.length + b.events.length : 0
@@ -32,7 +33,7 @@ export function Institutions() {
 
   return (
     <div className="page">
-      <h1 className="page-title">{enriched ? (lang === 'ru' ? 'Институции и сообщества' : 'Institutions & communities') : t('institutions', lang)}</h1>
+      <PageHead title={enriched ? (lang === 'ru' ? 'Институции и сообщества' : 'Institutions & communities') : t('institutions', lang)} />
       <p className="lead page-lead">
         {!enriched
           ? lang === 'ru'
@@ -151,9 +152,7 @@ export function InstitutionPage() {
 
   return (
     <div className="page entity">
-      <nav className="crumbs" aria-label="Breadcrumbs">
-        <Link to={crumb.to}>{crumb.label}</Link>
-      </nav>
+      <PageHead title={pick(e.name, lang)} crumbs={[crumb]} />
       <header className="author-hero">
         {e.logo ? <img className="author-photo author-photo--logo" src={e.logo} alt={pick(e.name, lang)} /> : <div className={`entity-mark entity-mark--${e.kind}`} aria-hidden="true">✶</div>}
         <div>
@@ -164,7 +163,6 @@ export function InstitutionPage() {
             {pick(e.location, lang) ? ` · ${pick(e.location, lang)}` : ''}
             {e.year ? ` · ${e.year}` : ''}
           </p>
-          <h1 className="page-title">{pick(e.name, lang)}</h1>
           {desc && (e.descriptionHtml ? <div className="prose" dangerouslySetInnerHTML={{ __html: desc }} /> : <p className="prose">{desc}</p>)}
           <dl className="meta">
             {pick(e.address, lang) && (

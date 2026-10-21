@@ -1,3 +1,4 @@
+import { PageHead } from '../components/PageHead'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { MaterialCard, MaterialRow } from '../components/Cards'
@@ -120,7 +121,7 @@ export function Explore() {
   return (
     <div className="explore">
       <div className="explore-head">
-        <h1 className="page-title">{t('explore', lang)}</h1>
+        <PageHead title={t('explore', lang)} />
         <label className="bigsearch">
           <Icon name="search" size={22} />
           <input type="search" value={qDraft} onChange={(e) => setQDraft(e.target.value)} placeholder={t('searchPlaceholder', lang)} aria-label={t('searchShort', lang)} />

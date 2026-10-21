@@ -68,57 +68,31 @@ export function Home() {
   return (
     <div className="home">
       <section className="hero">
-        <div className="hero-text">
-          <p className="kicker">{t('tagline', lang)}</p>
+        <div className="hero-image">
+          {/* the original archive's own cover image */}
+          <img src="https://astralnomads.panther.kz/curator/slides/2777fd1d-ea03-4d6a-a9bb-0aa71c88e5b5.webp?fit=max&fm=webp&q=85&w=1280&s=3f043abe3d54b89d7569f3ada2c30ab2" alt="" />
+        </div>
+        <div className="hero-panel">
+          <p className="hero-pretitle">Astral Nomads</p>
           <h1 className="hero-title">
-            {lang === 'ru' ? (
-              <>
-                От самиздата <br />
-                до видео-арта
-              </>
-            ) : (
-              <>
-                From samizdat <br />
-                to video art
-              </>
-            )}
+            {lang === 'ru' ? 'От самиздата до видео-арта: пять десятилетий искусства региона' : 'From samizdat to video art: five decades of the region’s art'}
           </h1>
           <p className="hero-lead">
             {lang === 'ru'
-              ? 'Книги, рисунки, живопись, видео, авторы и институции региона — пять десятилетий искусства, собранные в один открытый архив.'
-              : 'Books, drawings, paintings, video, artists and institutions of the region — five decades of art in one open archive.'}
+              ? 'Книги, видео, артефакты, авторы и институции региона — собранные, оцифрованные и доступные всем.'
+              : 'Books, video, artefacts, artists and institutions of the region — collected, digitised and open to all.'}
+          </p>
+          <p className="hero-stats">
+            {plural(archive.materials.length, lang, { ru: ['материал', 'материала', 'материалов'], en: ['item', 'items'] })} · {plural(archive.authors.length, lang, { ru: ['автор', 'автора', 'авторов'], en: ['author', 'authors'] })} · {archive.yearMin}–{archive.yearMax}
           </p>
           <div className="hero-actions">
-            <Link to="/explore" className="btn btn--primary btn--lg">
-              {t('explore', lang)} →
+            <Link to="/explore" className="btn btn--inverse">
+              {t('explore', lang)}
             </Link>
-            <button type="button" className="btn btn--lg" onClick={surprise}>
+            <button type="button" className="btn btn--inverse" onClick={surprise}>
               <Icon name="shuffle" /> {t('surprise', lang)}
             </button>
           </div>
-          <dl className="hero-stats">
-            <div>
-              <dd>{archive.materials.length}</dd>
-              <dt>{t('items', lang)}</dt>
-            </div>
-            <div>
-              <dd>{archive.authors.length}</dd>
-              <dt>{t('authors', lang).toLowerCase()}</dt>
-            </div>
-            <div>
-              <dd>
-                {archive.yearMin}–{archive.yearMax}
-              </dd>
-              <dt>{t('year', lang).toLowerCase()}</dt>
-            </div>
-          </dl>
-        </div>
-        <div className="hero-mosaic" aria-hidden="true">
-          {picks.slice(0, 5).map((m) => (
-            <Link key={m.id} to={materialPath(m)} tabIndex={-1} onClick={() => setTrail(picks.map((p) => p.id))}>
-              <img src={m.image} alt="" />
-            </Link>
-          ))}
         </div>
       </section>
 

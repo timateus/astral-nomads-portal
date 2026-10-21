@@ -3,6 +3,7 @@ import { useArchive } from '../data'
 import { itemsForms, pick, plural, t } from '../i18n'
 import type { ArchiveEvent, Entity } from '../types'
 import { NotFound } from './NotFound'
+import { PageHead } from '../components/PageHead'
 import { MinedMark, RefChips } from '../components/Links'
 import { InstitutionPage } from './Institutions'
 
@@ -63,7 +64,7 @@ export function Events() {
 
   return (
     <div className="page">
-      <h1 className="page-title">{t('events', lang)}</h1>
+      <PageHead title={t('events', lang)} />
       {current.length > 0 && (
         <section>
           <div className="section-head">
@@ -172,9 +173,7 @@ export function EventPage() {
   const others = archive.raw.events.filter((x) => x.id !== e.id)
   return (
     <div className="page event">
-      <nav className="crumbs" aria-label="Breadcrumbs">
-        <Link to="/events">{t('events', lang)}</Link>
-      </nav>
+      <PageHead title={pick(e.title, lang)} crumbs={[{ to: '/events', label: t('events', lang) }]} />
       <header className="event-hero">
         {e.image && <img src={e.image} alt="" className="event-hero-img" />}
         <div>
@@ -182,7 +181,6 @@ export function EventPage() {
             <span className={`badge badge--${status}`}>{t(status, lang)}</span>{' '}
             {e.labels[lang]?.filter((l) => !/^(Скоро|Сейчас|Прошло|Upcoming|Now on|Past)$/.test(l)).join(' · ')}
           </p>
-          <h1 className="page-title">{pick(e.title, lang)}</h1>
           <p className="lead">{pick(e.lead, lang)}</p>
           <dl className="meta meta--inline">
             <div>

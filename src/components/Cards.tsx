@@ -18,13 +18,12 @@ export function MaterialCard({ m, trail, eager }: { m: Material; trail?: string[
     <Link to={materialPath(m)} className="card" onClick={() => trail && setTrail(trail)}>
       <Thumb m={m} lang={lang} eager={eager} />
       <div className="card-body">
-        <span className="card-kicker">
-          {t(`${m.type}One`, lang)}
-          {m.year ? <> · {m.year}</> : null}
+        <span className="card-title">{pick(m.title, lang) || t('untitled', lang)}</span>
+        {creatorLine(m, names, lang) && <span className="card-author">{creatorLine(m, names, lang)}</span>}
+        <span className="card-meta">
+          {[country, m.year].filter(Boolean).join(' • ')}
           {enriched && m.minedLinks > 0 && <MinedCount n={m.minedLinks} lang={lang} />}
         </span>
-        <span className="card-title">{pick(m.title, lang) || t('untitled', lang)}</span>
-        <span className="card-meta">{[creatorLine(m, names, lang), country].filter(Boolean).join(' · ')}</span>
       </div>
     </Link>
   )

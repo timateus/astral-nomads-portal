@@ -8,6 +8,7 @@ import { roleLabel } from '../roles'
 import type { Lang, Person } from '../types'
 import { EventCard } from './Events'
 import { NotFound } from './NotFound'
+import { PageHead } from '../components/PageHead'
 
 type RoleGroup = 'author' | 'curator' | 'artist' | 'credits' | 'participant' | 'mention'
 
@@ -80,7 +81,7 @@ function PeopleIndex() {
 
   return (
     <div className="page">
-      <h1 className="page-title">{lang === 'ru' ? 'Персоналии' : 'People'}</h1>
+      <PageHead title={lang === 'ru' ? 'Персоналии' : 'People'} />
       <p className="lead page-lead">
         {lang === 'ru'
           ? `Все, кто назван в архиве: авторы, художники в каталогах, кураторы, редакторы, участники событий и герои биографических текстов — ${archive.people.length}. Страницы на исходном сайте есть только у авторов (✶); остальное (◇) мы собрали по текстам архива.`
@@ -158,9 +159,7 @@ export function PersonPage() {
 
   return (
     <div className="page">
-      <nav className="crumbs" aria-label="Breadcrumbs">
-        <Link to="/people">{lang === 'ru' ? 'Персоналии' : 'People'}</Link>
-      </nav>
+      <PageHead title={pick(p.name, lang)} crumbs={[{ to: '/people', label: lang === 'ru' ? 'Персоналии' : 'People' }]} />
       <header className="person-hero">
         <div className="entity-mark entity-mark--person" aria-hidden="true">
           {pick(p.name, lang).charAt(0)}
@@ -170,7 +169,6 @@ export function PersonPage() {
             <MinedMark lang={lang} />
             {roles.length > 0 ? ` · ${roles.join(' · ')}` : ''}
           </p>
-          <h1 className="page-title">{pick(p.name, lang)}</h1>
           {other && other !== pick(p.name, lang) && <p className="lead">{other}</p>}
           <p className="provenance">
             {lang === 'ru'
