@@ -40,8 +40,8 @@ export function EnrichedInfo({ onClose }: { onClose: () => void }) {
       </p>
       <p>
         {ru
-          ? 'Теперь сайт показывает не только исходный архив, но и то, что мы собрали по его же текстам: метаданным, биографиям, описаниям событий и 21 PDF-каталогу. Несколько записей — по внешним источникам, со ссылкой на них.'
-          : 'The site now shows more than the original archive: also what we compiled from its own texts — metadata, biographies, event descriptions and 21 PDF catalogues. A few entries come from external sources, linked on their pages.'}
+          ? 'Теперь сайт показывает не только исходный архив, но и то, что мы собрали по его же текстам: метаданным, биографиям, описаниям событий и 21 PDF-каталогу.'
+          : 'The site now shows more than the original archive: also what we compiled from its own texts — metadata, biographies, event descriptions and 21 PDF catalogues.'}
       </p>
       <ul>
         <li>

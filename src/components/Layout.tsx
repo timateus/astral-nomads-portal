@@ -113,8 +113,8 @@ export function Layout() {
         <p className="footer-note">
           <span className="mined-mark">◇</span>{' '}
           {lang === 'ru'
-            ? '— дополнения: институции, персоналии, связи и факты, которые мы собрали по текстам самого архива (метаданным, биографиям, описаниям событий), а несколько записей — по внешним источникам со ссылкой. Их можно скрыть переключателем «Дополнения» в шапке.'
-            : '— added data: institutions, people, links and facts we compiled from the archive’s own texts (metadata, biographies, event descriptions), plus a few entries from linked external sources. Hide them with the “Added data” switch in the header.'}
+            ? '— дополнения: институции, персоналии, связи и факты, которые мы собрали по текстам самого архива (метаданным, биографиям, описаниям событий). Их можно скрыть переключателем «Дополнения» в шапке.'
+            : '— added data: institutions, people, links and facts we compiled from the archive’s own texts (metadata, biographies, event descriptions). Hide them with the “Added data” switch in the header.'}
         </p>
         )}
       </footer>

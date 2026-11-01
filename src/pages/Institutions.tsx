@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom'
 import { MaterialCard } from '../components/Cards'
-import { EntityChip, ExternalSources, MinedMark, PdfSources, PersonChip, Snippets } from '../components/Links'
+import { EntityChip, MinedMark, PdfSources, PersonChip, Snippets } from '../components/Links'
 import { isOriginalRef, useArchive, visibleRefs, type Backlinks } from '../data'
 import { exploreLink } from '../filters'
 import { pick, plural, t, itemsForms } from '../i18n'
@@ -200,8 +200,6 @@ export function InstitutionPage() {
               <a className="text-link" href={e.url} target="_blank" rel="noopener">
                 {t('originalPage', lang)} ↗
               </a>
-            ) : e.external?.length ? (
-              lang === 'ru' ? 'Этой записи нет в исходном архиве: карточка составлена по внешним источникам, они указаны ниже.' : 'Not in the original archive: compiled from the external sources listed below.'
             ) : lang === 'ru' ? (
               'Карточка собрана по текстам архива: метаданным материалов, биографиям и описаниям событий.'
             ) : (
@@ -252,7 +250,6 @@ export function InstitutionPage() {
       )}
 
       {enriched && <PdfSources sources={e.sources} lang={lang} />}
-      {enriched && <ExternalSources sources={e.external} lang={lang} />}
 
       {mentions.length > 0 && (
         <section>
