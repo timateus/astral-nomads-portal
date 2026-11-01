@@ -38,6 +38,14 @@ export interface Entity {
   emails?: string[]
   refs?: Refs
   sources?: Source[]
+  /** sources outside the archive (with a link), for entries the archive itself doesn't cover */
+  external?: ExternalSource[]
+}
+
+export interface ExternalSource {
+  url: string
+  title: Bi
+  date?: string
 }
 
 /** Where a curated entity or person is named in a material's PDF */

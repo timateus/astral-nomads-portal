@@ -2,11 +2,11 @@ import { Link } from 'react-router-dom'
 import { materialPath, personPath, useArchive, visibleRefs } from '../data'
 import { pick } from '../i18n'
 import { KIND_LABELS, roleLabel } from '../roles'
-import type { Entity, Lang, Person, Ref, Source } from '../types'
+import type { Entity, ExternalSource, Lang, Person, Ref, Source } from '../types'
 
 const MINED_TITLE: Record<Lang, string> = {
-  ru: 'Дополнено нами по текстам архива: на исходном сайте этих данных в таком виде нет',
-  en: 'Added by us from the archive’s own texts; the original site does not publish this as such',
+  ru: 'Дополнено нами — по текстам архива или по внешним источникам со ссылкой; на исходном сайте этих данных в таком виде нет',
+  en: 'Added by us — from the archive’s own texts or from linked external sources; the original site does not publish this as such',
 }
 
 /** Marks data we derived from the archive's texts rather than data the original site publishes. */
@@ -137,6 +137,32 @@ export function PdfSources({ sources, lang }: { sources?: Source[]; lang: Lang }
             </li>
           )
         })}
+      </ul>
+    </section>
+  )
+}
+
+/** Sources outside the archive for an added entry, always with a link. */
+export function ExternalSources({ sources, lang }: { sources?: ExternalSource[]; lang: Lang }) {
+  if (!sources?.length) return null
+  return (
+    <section>
+      <div className="section-head">
+        <h2>
+          {lang === 'ru' ? 'Внешние источники' : 'External sources'} <MinedMark lang={lang} />
+        </h2>
+      </div>
+      <p className="muted section-note">
+        {lang === 'ru' ? 'Этих сведений нет в исходном архиве — они взяты из источников ниже.' : 'This is not in the original archive — it comes from the sources below.'}
+      </p>
+      <ul className="pdf-sources">
+        {sources.map((s) => (
+          <li key={s.url}>
+            <a href={s.url} target="_blank" rel="noopener" className="text-link">
+              {pick(s.title, lang)} ↗
+            </a>
+          </li>
+        ))}
       </ul>
     </section>
   )

@@ -358,7 +358,8 @@ def main():
         for o in coll:
             used_e.update(r["id"] for r in o.get("refs", {}).get("entities", []))
             used_p.update(r["id"] for r in o.get("refs", {}).get("people", []))
-    data["entities"] = [e for e in entities.values() if e["id"] in used_e or e.get("source")]
+    # keep entities linked from the archive, with a source page, or documented by an external source
+    data["entities"] = [e for e in entities.values() if e["id"] in used_e or e.get("source") or e.get("external")]
     data["people"] = [p for p in people.by_id.values() if p["id"] in used_p or p.get("authorId")]
     missing = {r for r in used_e if r not in entities}
     if missing:
