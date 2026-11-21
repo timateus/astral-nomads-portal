@@ -1138,6 +1138,19 @@ section {
 .item-image:focus-visible .zoom-hint {
   opacity: 1;
 }
+.archive-attachments {
+  margin-top: 20px;
+}
+.archive-attachments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 132px), 1fr));
+  gap: 12px;
+}
+.archive-attachments-grid .item-image img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
 .item-media > .thumb {
   aspect-ratio: 4 / 3;
 }
@@ -1730,6 +1743,11 @@ section {
   gap: clamp(24px, 4vw, 48px);
   align-items: start;
   margin: 0 0 32px;
+}
+.author-hero > :only-child {
+  grid-column: 1 / -1;
+  min-width: 0;
+  max-width: 70ch;
 }
 .author-photo {
   width: 100%;

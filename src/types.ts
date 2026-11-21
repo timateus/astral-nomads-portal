@@ -85,6 +85,7 @@ export interface RawMaterial {
   keywords: BiList
   image?: string
   imageLarge?: string
+  attachments?: { name: string; url: string; image?: string }[]
   video?: string
   pdf?: string
   pdfSize?: number

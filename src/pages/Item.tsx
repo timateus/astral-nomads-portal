@@ -26,12 +26,12 @@ export function Item() {
   const { archive, lang, enriched } = useArchive()
   const navigate = useNavigate()
   const m = archive.byId.get(`${type}:${slug}`)
-  const [zoom, setZoom] = useState(false)
+  const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null)
   const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
     setPlaying(false)
-    setZoom(false)
+    setZoom(null)
   }, [m?.id])
 
   const trail = getTrail()
@@ -59,6 +59,7 @@ export function Item() {
   if (!m) return <NotFound />
 
   const title = pick(m.title, lang) || t('untitled', lang)
+  const image = m.image
   const vid = m.video ? youtubeId(m.video) : undefined
   const authors = m.authorIds.map((id) => archive.authorById.get(id)!).filter(Boolean)
   const section = m.type
@@ -91,6 +92,7 @@ export function Item() {
   } else add('medium', m.medium)
   add('dimensions', m.dimensions)
   if (m.year) rows.push([t('yearCreated', lang), <Link to={exploreLink({}, { from: m.year, to: m.year })}>{pick(m.yearText, lang) || m.year}</Link>])
+  else add('yearCreated', m.yearText)
   add('place', m.place, m.placeKey ? exploreLink({ place: [m.placeKey] }) : undefined)
   if (m.country) add('country', archive.terms.country.get(m.country)?.label, exploreLink({ country: [m.country] }))
   add('editors', m.editors)
@@ -141,9 +143,9 @@ export function Item() {
                 </span>
               </button>
             )
-          ) : m.image ? (
-            <button type="button" className="item-image" onClick={() => setZoom(true)} aria-label={`${t('zoom', lang)}: ${title}`}>
-              <img src={m.image} alt={title} />
+          ) : image ? (
+            <button type="button" className="item-image" onClick={() => setZoom({ src: m.imageLarge ?? image, alt: title })} aria-label={`${t('zoom', lang)}: ${title}`}>
+              <img src={image} alt={title} />
               <span className="zoom-hint">
                 <Icon name="zoom" size={16} /> {t('zoom', lang)}
               </span>
@@ -151,6 +153,21 @@ export function Item() {
           ) : (
             <Thumb m={m} lang={lang} />
           )}
+          {m.attachments?.length ? (
+            <section className="archive-attachments">
+              <h2 className="facet-title">{lang === 'ru' ? 'Материалы из архива' : 'Archive materials'}</h2>
+              <div className="archive-attachments-grid">
+                {m.attachments.map(({ image, name, url }) => image ? (
+                  <button key={url} type="button" className="item-image" aria-label={name}
+                    onClick={() => setZoom({ src: image, alt: name })}>
+                    <img src={image} alt={name} loading="lazy" />
+                  </button>
+                ) : (
+                  <a key={url} href={url} className="text-link" target="_blank" rel="noopener">{name}</a>
+                ))}
+              </div>
+            </section>
+          ) : null}
           <div className="item-actions">
             {m.pdf && (
               <a className="btn btn--primary" href={m.pdf} rel="nofollow">
@@ -231,7 +248,7 @@ export function Item() {
         </>
       )}
 
-      {zoom && m.image && <Lightbox src={m.imageLarge ?? m.image} alt={title} onClose={() => setZoom(false)} lang={lang} />}
+      {zoom && <Lightbox src={zoom.src} alt={zoom.alt} onClose={() => setZoom(null)} lang={lang} />}
     </article>
   )
 }

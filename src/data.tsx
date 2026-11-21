@@ -1,6 +1,7 @@
 import MiniSearch from 'minisearch'
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { ArchiveEvent, Author, Bi, Entity, Lang, Material, Person, RawArchive, RawMaterial, Ref, Term } from './types'
+import { withSauleDyussenbina } from './imports/saule-duisenbina'
 
 /** Medium categories, matched against the free-text "technique" field in both languages. */
 const MEDIUMS: { key: string; label: Bi; re: RegExp }[] = [
@@ -242,7 +243,7 @@ export function ArchiveProvider({ children }: { children: ReactNode }) {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.json()
       })
-      .then((raw: RawArchive) => setArchive(build(raw)))
+      .then((raw: RawArchive) => setArchive(build(withSauleDyussenbina(raw))))
       .catch((e) => setError(String(e)))
   }, [])
 
