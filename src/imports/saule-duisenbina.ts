@@ -26,12 +26,12 @@ const author: Author = {
   about: {},
 }
 
-type ArchiveFile = { name: string; url: string; image?: string; pdf?: string }
+type ArchiveFile = { name: string; url: string; image?: string; pdf?: string; localFile?: string }
 
 function attachments(files: ArchiveFile[]) {
-  return files.map(({ name, url, image, pdf }) => ({
+  return files.map(({ name, url, image, pdf, localFile }) => ({
     name,
-    url: pdf ? asset(pdf) : url,
+    url: localFile ? `${import.meta.env.BASE_URL}media/source-archive/${localFile}` : pdf ? asset(pdf) : url,
     image: image ? asset(image) : undefined,
   }))
 }

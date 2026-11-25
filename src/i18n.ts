@@ -99,8 +99,8 @@ const strings = {
   pressEnter: { ru: 'Enter — все результаты в обзоре', en: 'Enter — see all results in Explore' },
   searchIn: { ru: 'Искать', en: 'Search' },
   dataNote: {
-    ru: 'Данные и изображения — astralnomads.panther.kz. Снимок от',
-    en: 'Data and images from astralnomads.panther.kz. Snapshot of',
+    ru: 'Данные и изображения — astralnomads.net. Снимок от',
+    en: 'Data and images from astralnomads.net. Snapshot of',
   },
   home: { ru: 'Главная', en: 'Home' },
   untitled: { ru: 'Без названия', en: 'Untitled' },

@@ -39,7 +39,7 @@ In the app this adds an **Institutions & communities** index and pages, a **Peop
 
 ## Data notes
 
-- Images and PDFs are hotlinked from the source server, using the signed URLs found on its pages (the image server rejects unsigned sizes). The source server is slow, so for production these should be mirrored to a CDN.
+- The production build uses `scripts/media-mirror.json` to map source URLs in the archive snapshot to verified copies in `public/media/source-archive/`. GitHub Pages uses the same files for the current interface and `/v1/`. The snapshot retains the source URLs so it can be refreshed independently of the media mirror.
 - "Medium" is derived from the free-text technique field with a few rules (`src/data.tsx`); keywords that are only an artist's surname are dropped because the author filter already covers them.
 - Event status (upcoming / now / past) is computed from the dates rather than the source's labels, which go stale.
 - The source's `robots.txt` disallows all crawling (it looks like a staging host). The crawler is meant for the archive owners' own use.

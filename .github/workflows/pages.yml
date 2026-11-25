@@ -39,6 +39,9 @@ jobs:
         env:
           BASE_PATH: /${{ github.event.repository.name }}/v1/
       - run: cp -r v1src/dist dist/v1
+      - run: python3 -I scripts/localize-media.py dist/v1/data/archive.json
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

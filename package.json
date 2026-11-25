@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && python3 -I scripts/localize-media.py",
     "lint": "oxlint",
     "preview": "vite preview",
     "data": "python3 -I scripts/crawl.py && python3 -I scripts/parse.py && python3 -I scripts/enrich.py"

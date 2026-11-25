@@ -70,7 +70,7 @@ export function Home() {
       <section className="hero">
         <div className="hero-image">
           {/* the original archive's own cover image */}
-          <img src="https://astralnomads.panther.kz/curator/slides/2777fd1d-ea03-4d6a-a9bb-0aa71c88e5b5.webp?fit=max&fm=webp&q=85&w=1280&s=3f043abe3d54b89d7569f3ada2c30ab2" alt="" />
+          <img src={`${import.meta.env.BASE_URL}media/source-archive/home-cover.webp`} alt="" />
         </div>
         <div className="hero-panel">
           <p className="hero-pretitle">Astral Nomads</p>
